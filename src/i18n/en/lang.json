@@ -1,0 +1,17 @@
+{
+  "HELLO": "Testing hello",
+  "IS_STRING": "Field $t({entity}.{property}) must be a string",
+  "IS_URL": "Field $t({entity}.{property}) must be an url",
+  "IS_EMAIL": "Field $t({entity}.{property}) must be an valid email",
+  "IS_POSITIVE": "Field $t({entity}.{property}) must be positive",
+  "IS_INT": "Field $t({entity}.{property}) must be an integer",
+  "IS_BOOLEAN": "Field $t({entity}.{property}) must be a boolean",
+  "IS_DATE": "Field $t({entity}.{property}) must be a date",
+  "IS_ENUM": "Field $t({entity}.{property}) must be a valid enum with values {enum}",
+  "MIN": "Field $t({entity}.{property}) must be greater than {min}",
+  "MAX": "Field $t({entity}.{property}) must be less than {max}",
+  "BAD_REQUEST": "Bad request",
+  "NOT_FOUND": "Resource not found",
+  "CONFLICT": "Resource already created",
+  "UNAUTHORIZED": "Unauthorized"
+}

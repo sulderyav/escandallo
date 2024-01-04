@@ -1,0 +1,15 @@
+{
+  "USER": "Usuario",
+  "PRODUCT": "Producto",
+  "CATEGORY": "Categoría",
+  "SUBCATEGORY": "Subcategoría",
+  "SALE": "Venta",
+  "SALE_ITEM": "Item de venta",
+  "STORE": "Tienda",
+  "CLIENT": "Cliente",
+  "SHIPPING_ADDRESS": "Dirección de envío",
+  "RECEIVER": "Destinatario",
+  "RELATIONSHIP": "Relación",
+  "CATALOGUE": "Catálogo",
+  "CATALOGUE_ITEM": "Item de catálogo"
+}

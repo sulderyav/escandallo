@@ -1,0 +1,14 @@
+{
+  "code": "Code",
+  "avatarUrl": "Avatar",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "fullName": "Full Name",
+  "email": "Email",
+  "phone": "Phone",
+  "password": "Password",
+  "isActive": "Is Active",
+  "emailIsVerified": "Email Is Verified",
+  "registerDate": "Register Date",
+  "verifyEmailDate": "Verify Email Date"
+}

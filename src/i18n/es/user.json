@@ -1,0 +1,13 @@
+{
+  "code": "Código",
+  "avatarUrl": "Avatar",
+  "firstName": "Nombre",
+  "lastName": "Apellido",
+  "fullName": "Nombre completo",
+  "email": "Correo",
+  "mobile": "Teléfono",
+  "password": "Contraseña",
+  "isActive": "Está activo",
+  "registerDate": "Fecha de registro",
+  "rolesIds": "Roles"
+}
