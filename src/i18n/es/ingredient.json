@@ -1,0 +1,8 @@
+{
+  "slug": "Slug",
+  "image": "Imagen",
+  "name": "Nombre",
+  "description": "Descripción",
+  "meassurementType": "Tipo de medida",
+  "cost": "Costo"
+}
