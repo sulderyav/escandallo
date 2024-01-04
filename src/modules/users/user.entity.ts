@@ -11,12 +11,13 @@ import {
   BeforeUpdate,
   ManyToMany,
   JoinTable,
+  OneToOne,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { v4 as uuid } from 'uuid';
-import { Role } from './role.entity';
 
-const bcrypt = require('bcrypt');
+import { Role } from './role.entity';
+import { Credential } from './credentials.entity';
 
 @Entity('users')
 export class User {
@@ -28,31 +29,14 @@ export class User {
     nullable: false,
     unique: true,
   })
-  code: string;
+  username: string;
 
   @Column({
     type: 'varchar',
     nullable: false,
+    unique: true,
   })
-  avatarUrl: string;
-
-  @Column({
-    type: 'varchar',
-    nullable: false,
-  })
-  firstName: string;
-
-  @Column({
-    type: 'varchar',
-    nullable: false,
-  })
-  lastName: string;
-
-  @Column({
-    type: 'varchar',
-    nullable: false,
-  })
-  fullName: string;
+  mobile: string;
 
   @Column({
     type: 'varchar',
@@ -64,29 +48,20 @@ export class User {
   @Column({
     type: 'varchar',
     nullable: false,
-    unique: true,
   })
-  mobile: string;
+  fullName: string;
 
-  @Exclude()
   @Column({
     type: 'varchar',
     nullable: false,
   })
-  password: string;
+  firstName: string;
 
   @Column({
-    type: 'boolean',
-    default: true,
-    nullable: false,
+    type: 'varchar',
+    nullable: true,
   })
-  isActive: boolean;
-
-  @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  registerDate: Date;
+  lastName: string;
 
   @Column({
     type: 'boolean',
@@ -119,18 +94,13 @@ export class User {
   @JoinTable({ name: 'user_roles' })
   roles: Role[];
 
-  @BeforeInsert()
-  @BeforeUpdate()
-  hashPasswordandGenerateCode() {
-    this.code = 'USER-' + Math.floor(Math.random() * 1000000);
-    this.password = bcrypt.hashSync(this.password, 10);
-  }
+  @OneToOne(() => Credential, (credential) => credential.user)
+  credential: Credential;
 
   @BeforeUpdate()
   async setDeletedAt() {
     if (this.isDeleted) {
       const uuidCode = uuid().split('-')[0];
-      this.code = `${this.code}-${uuidCode}`;
       this.email = `${this.email}-${uuidCode}`;
       this.mobile = `${this.mobile}-${uuidCode}`;
       this.deletedAt = new Date();

@@ -9,12 +9,15 @@ import {
 import { User } from './user.entity';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { RolesService } from '../users/roles.service';
+import { Credential } from './credentials.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepo: Repository<User>,
+    @InjectRepository(Credential)
+    private credentialRepo: Repository<Credential>,
     private rolesService: RolesService,
   ) {}
 
@@ -25,10 +28,9 @@ export class UsersService {
   async listAll() {
     return await this.userRepo.find({
       where: {
-        isActive: true,
         isDeleted: false,
       },
-      select: ['id', 'fullName', 'email', 'mobile', 'avatarUrl'],
+      select: ['id', 'fullName', 'email', 'mobile'],
     });
   }
 
@@ -43,14 +45,13 @@ export class UsersService {
 
   async myInfo(id: number) {
     const user = await this.userRepo.findOneBy({ id });
-    delete user.password;
     return user;
   }
 
   async findByEmail(email: string) {
     return await this.userRepo.findOne({
       where: { email },
-      relations: ['roles'],
+      relations: ['roles', 'credential'],
     });
   }
 
@@ -62,16 +63,22 @@ export class UsersService {
     const roles = await this.rolesService.findByRolesIds(data.rolesIds);
     newUser.roles = roles;
 
-    if (!newUser.avatarUrl)
-      newUser.avatarUrl = `https://ui-avatars.com/api/?name=${newUser.firstName}${newUser.lastName}&background=random`;
-
     if (newUser.roles.length === 0)
       throw new HttpExceptionMessage(
         HttpStatus.BAD_REQUEST,
         'The user must have at least one role',
       );
 
-    return await this.userRepo.save(newUser);
+    const createdUser = await this.userRepo.save(newUser);
+
+    await this.credentialRepo.save({
+      user: await this.userRepo.findOne({
+        where: { id: createdUser.id },
+      }),
+      password: data.password,
+    });
+
+    return createdUser;
   }
 
   async checkIfUserExists(

@@ -17,21 +17,6 @@ import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { i18nValidationMessage as t } from 'nestjs-i18n';
 
 export class CreateUserDto {
-  // readonly code: string;
-
-  @IsOptional()
-  @IsUrl(
-    {},
-    {
-      message: t('lang.IS_URL', {
-        field: 'avatarUrl',
-        entity: 'user',
-      }),
-    },
-  )
-  @ApiProperty()
-  readonly avatarUrl?: string;
-
   @IsString({
     message: t('lang.IS_STRING', {
       field: 'firstName',
@@ -49,8 +34,6 @@ export class CreateUserDto {
   })
   @ApiProperty()
   readonly lastName: string;
-
-  // readonly fullName: string;
 
   @IsEmail(
     {},
@@ -81,6 +64,15 @@ export class CreateUserDto {
   })
   @ApiProperty()
   readonly password: string;
+
+  @IsString({
+    message: t('lang.IS_STRING', {
+      field: 'username',
+      entity: 'user',
+    }),
+  })
+  @ApiProperty()
+  readonly username: string;
 
   @IsOptional()
   @IsBoolean({

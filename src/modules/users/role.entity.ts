@@ -10,11 +10,9 @@ import {
 import { Exclude } from 'class-transformer';
 import { User } from './user.entity';
 
-export enum RoleCodes {
-  SUPER_ADMIN = 'SA',
-  ADMIN = 'AD',
-  SELLER = 'SL',
-  SUPPLIER = 'SP',
+export enum RoleNames {
+  SUPER_ADMIN = 'Super Admin',
+  ADMIN = 'Admin',
 }
 
 @Entity('roles')
@@ -24,18 +22,11 @@ export class Role {
 
   @Column({
     type: 'enum',
-    enum: RoleCodes,
     nullable: false,
     unique: true,
+    enum: RoleNames,
   })
-  code: RoleCodes;
-
-  @Column({
-    type: 'varchar',
-    nullable: false,
-    unique: true,
-  })
-  name: string;
+  name: RoleNames;
 
   @Column({
     type: 'varchar',

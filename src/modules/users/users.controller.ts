@@ -18,7 +18,7 @@ import { JwtAuthGuard, RolesGuard } from '../../auth/guards';
 import { Roles, Public } from '../../auth/decorators';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
-import { RoleCodes } from './role.entity';
+import { RoleNames } from './role.entity';
 import { PayloadToken } from 'src/auth/models/token.model';
 import { HttpException } from 'src/utils/HttpExceptionFilter';
 
@@ -35,19 +35,19 @@ export class UsersController {
     return await this.usersService.myInfo(user.userId);
   }
 
-  @Roles(RoleCodes.ADMIN)
+  @Roles(RoleNames.ADMIN)
   @Get()
   async findAll() {
     return await this.usersService.findAll();
   }
 
-  @Roles(RoleCodes.ADMIN)
+  @Roles(RoleNames.ADMIN)
   @Get('/list')
   async listAll() {
     return await this.usersService.listAll();
   }
 
-  @Roles(RoleCodes.ADMIN)
+  @Roles(RoleNames.ADMIN)
   @Get('/:id')
   async getOne(@Param('id') id: number) {
     return await this.usersService.findOne(id);
@@ -59,7 +59,7 @@ export class UsersController {
     return await this.usersService.create(payload);
   }
 
-  @Roles(RoleCodes.ADMIN)
+  @Roles(RoleNames.ADMIN)
   @Put('/:id')
   async update(
     @Param('id', ParseIntPipe) id: number,

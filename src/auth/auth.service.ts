@@ -37,12 +37,16 @@ export class AuthService {
     if (!user) throw new HttpException(HttpStatus.NOT_FOUND);
 
     // Second we campare the passwords
-    if (!(await bcrypt.compare(password, user.password))) {
+    // if (!(await bcrypt.compare(password, user.credential.password))) {
+    //   // await this.usersService.incrementLoginAttempts(user.id);
+    //   throw new HttpException(HttpStatus.UNAUTHORIZED);
+    // }
+
+    if (password !== user.credential.password) {
       // await this.usersService.incrementLoginAttempts(user.id);
       throw new HttpException(HttpStatus.UNAUTHORIZED);
     }
 
-    // await this.usersService.resetLoginAttempts(user.id);
     return user;
   }
 
@@ -92,7 +96,7 @@ export class AuthService {
     const accessPayload = {
       email: user.email,
       sub: user.id,
-      roles: user.roles.map((r) => r.code),
+      roles: user.roles.map((r) => r.name),
     };
 
     const accessToken = this.jwtService.sign(accessPayload, {
