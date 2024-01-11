@@ -30,7 +30,21 @@ export class UsersService {
       where: {
         isDeleted: false,
       },
-      select: ['id', 'fullName', 'email', 'mobile'],
+      // select: ['id', 'fullName', 'email', 'mobile', 'credential', 'roles'],
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        mobile: true,
+        roles: {
+          id: true,
+          name: true,
+        },
+        credential: {
+          password: true,
+        },
+      },
+      relations: ['roles', 'credential'],
     });
   }
 

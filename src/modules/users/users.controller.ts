@@ -35,13 +35,15 @@ export class UsersController {
     return await this.usersService.myInfo(user.userId);
   }
 
-  @Roles(RoleNames.ADMIN)
+  // @Roles(RoleNames.ADMIN)
+  @Public()
   @Get()
   async findAll() {
     return await this.usersService.findAll();
   }
 
-  @Roles(RoleNames.ADMIN)
+  // @Roles(RoleNames.ADMIN)
+  @Public()
   @Get('/list')
   async listAll() {
     return await this.usersService.listAll();
