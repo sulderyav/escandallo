@@ -13,6 +13,8 @@ import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { IngredientsModule } from './modules/ingredients/ingredients.module';
+import { RecipesModule } from './modules/recipes/recipes.module';
+import { SubjectsModule } from './modules/subjects/subjects.module';
 
 @Module({
   imports: [
@@ -74,6 +76,8 @@ import { IngredientsModule } from './modules/ingredients/ingredients.module';
     UsersModule,
     AuthModule,
     IngredientsModule,
+    RecipesModule,
+    SubjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
