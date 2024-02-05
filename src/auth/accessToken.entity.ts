@@ -17,9 +17,9 @@ export class AccessToken {
 
   @ManyToOne((type) => User)
   @JoinColumn({
-    name: 'userId',
+    name: 'system_user_id',
   })
-  user: User;
+  systemUser: User;
 
   @Column({
     default: false,

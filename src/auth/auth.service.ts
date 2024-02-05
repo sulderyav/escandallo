@@ -6,17 +6,16 @@ import { JwtDto } from './dto/Jwt.dto';
 import { JwtService } from '@nestjs/jwt';
 import { AccessToken } from './accessToken.entity';
 import { RefreshToken } from './refreshToken.entity';
-import { User } from '../modules/users/user.entity';
-import { UsersService } from '../modules/users/users.service';
 import { ConfigService } from '@nestjs/config';
-import { uid } from 'rand-token';
+import { v4 as uuid } from 'uuid';
 
-// const { OAuth2Client } = require('google-auth-library');
-// const client = new OAuth2Client();
-
-// import { unix } from 'moment';
-import { HttpException } from '../utils/HttpExceptionFilter';
-import { Role } from '../modules/users/role.entity';
+import {
+  HttpException,
+  HttpExceptionMessage,
+} from '../utils/HttpExceptionFilter';
+import { UsersService } from '../modules/users/users.service';
+import { User } from '../modules/users/user.entity';
+import { RoleNames } from '../modules/users/role.entity';
 
 @Injectable()
 export class AuthService {
@@ -27,32 +26,31 @@ export class AuthService {
     private jwtService: JwtService,
     @InjectRepository(RefreshToken)
     private readonly refreshRepository: Repository<RefreshToken>,
+    private systemUsersService: UsersService,
     private usersService: UsersService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.usersService.findByEmail(email);
+    const user = await this.systemUsersService.findOneBy(
+      {
+        email,
+      },
+      ['roles', 'credential'],
+    );
 
     // First search if the user exists
-    if (!user) throw new HttpException(HttpStatus.NOT_FOUND);
+    if (!user) throw new HttpException(HttpStatus.NOT_FOUND, 'USER');
 
     // Second we campare the passwords
-    // if (!(await bcrypt.compare(password, user.credential.password))) {
-    //   // await this.usersService.incrementLoginAttempts(user.id);
-    //   throw new HttpException(HttpStatus.UNAUTHORIZED);
-    // }
-
-    if (password !== user.credential.password) {
-      // await this.usersService.incrementLoginAttempts(user.id);
-      throw new HttpException(HttpStatus.UNAUTHORIZED);
+    if (!(await bcrypt.compare(password, user.credential.password))) {
+      throw new HttpExceptionMessage(HttpStatus.UNAUTHORIZED, 'Wrong password');
     }
 
     return user;
   }
 
-  async login(user: User): Promise<JwtDto> {
-    // this.usersService.setLastLogin(user.id);
-    return await this.createTokens(user);
+  async login(user: User, tenantId: number): Promise<JwtDto> {
+    return await this.createUserTokens(user);
   }
 
   async refresh(token: string): Promise<JwtDto> {
@@ -79,20 +77,30 @@ export class AuthService {
       refreshToken.accessToken.revoked = true;
       await this.accessTokenRepository.save(refreshToken.accessToken);
 
-      // this.usersService.setLastLogin(refreshToken.accessToken.user.id);
+      // this.systemUsersService.setLastLogin(refreshToken.accessToken.user.id);
       // // Find the full user here because refreshToken does not contain user roles
-      const fullUser = await this.usersService.findByEmail(
-        refreshToken.accessToken.user.email,
+      // const fullUser = await this.systemUsersService.findByEmail(
+      //   refreshToken.accessToken.systemUser.email,
+      // );
+      const fullUser = await this.systemUsersService.findOneBy(
+        {
+          email: refreshToken.accessToken.systemUser.email,
+        },
+        ['roles'],
+        false,
       );
-      return this.createTokens(fullUser);
+      // Testing value: 1
+      return this.createUserTokens(fullUser);
     } catch (e) {
       throw new UnauthorizedException(e.message);
     }
   }
 
-  async createTokens(user: User): Promise<JwtDto> {
-    const id = uid(64);
-    const refreshId = uid(64);
+  async createUserTokens(
+    user: User,
+  ): Promise<JwtDto> {
+    const id = uuid();
+    const refreshId = uuid();
     const accessPayload = {
       email: user.email,
       sub: user.id,
@@ -100,43 +108,52 @@ export class AuthService {
     };
 
     const accessToken = this.jwtService.sign(accessPayload, {
+      expiresIn: this.configService.get('JWT_EXPIRATION'),
       jwtid: id,
     });
-
-    // const tokenData: any = this.jwtService.decode(accessToken);
 
     const refreshToken = this.jwtService.sign(
       {},
       {
-        expiresIn: this.configService.get('JWT_REFRESH_EXPIRATION'),
+        expiresIn: this.configService.get('JWT_EXPIRATION'),
         jwtid: refreshId,
       },
     );
-
-    // const accessTokenDB = await this.accessTokenRepository.save({
-    //   id,
-    //   user: await this.usersService.findOne(user.id),
-    //   // expiresAt: unix(tokenData.exp).format(),
-    //   expiresAt: new Date(),
-    // });
-
-    // await this.refreshRepository.save({
-    //   id: refreshId,
-    //   accessToken: accessTokenDB,
-    //   expiresAt: unix(
-    //     (this.jwtService.decode(refreshToken) as any).exp,
-    //   ).format(),
-    // });
-
-    // // Verify the password expiration time
-    // const { areSoonToExpire, areExpired, credentialsExpireAt } =
-    //   await this.usersService.informationAboutCredentialsExpiration(user.id);
 
     return {
       accessToken,
       refreshToken,
       roles: accessPayload.roles,
-      username: accessPayload.email,
+      sub: accessPayload.sub,
+      email: accessPayload.email,
     };
   }
+
+  async validateUserTokenInfo(userId: number, roles: RoleNames[]) {
+    const user = await this.systemUsersService.findOneBy(
+      {
+        id: userId,
+      },
+      ['roles'],
+      false,
+    );
+    if (!user)
+      throw new HttpExceptionMessage(
+        HttpStatus.UNAUTHORIZED,
+        'System User have been deleted',
+      );
+
+    const assignedRoles = user.roles.map((r) => r.name);
+    // const areRolesTheSame = equalsIgnoreOrder(roles, assignedRoles);
+
+    // if (!areRolesTheSame)
+    //   throw new HttpExceptionMessage(
+    //     HttpStatus.FORBIDDEN,
+    //     'System Roles have been updated',
+    //   );
+
+    return user;
+  }
+
+ 
 }

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from 'src/modules/users/user.entity';
+
+import { RoleNames } from '../../modules/users/role.entity';
 
 export class JwtDto {
   @ApiProperty()
@@ -9,11 +10,12 @@ export class JwtDto {
   refreshToken: string;
 
   @ApiProperty()
-  roles: string[];
+  roles: RoleNames[];
 
   @ApiProperty()
-  username: string;
+  email: string;
 
-  // @ApiProperty()
-  // user: Partial<User>;
+  @ApiProperty()
+  sub: number;
+
 }

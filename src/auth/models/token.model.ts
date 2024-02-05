@@ -2,6 +2,7 @@ import { RoleNames } from '../../modules/users/role.entity';
 
 export interface PayloadToken {
   userId: number;
-  username: string;
+  email: string;
   roles: RoleNames[];
+  tenantId?: number;
 }

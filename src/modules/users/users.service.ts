@@ -1,6 +1,6 @@
 import { Injectable, Inject, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 
 import {
   HttpException,
@@ -10,6 +10,8 @@ import { User } from './user.entity';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { RolesService } from '../users/roles.service';
 import { Credential } from './credentials.entity';
+
+const bcrypt = require('bcrypt');
 
 @Injectable()
 export class UsersService {
@@ -62,6 +64,34 @@ export class UsersService {
     return user;
   }
 
+  async findOneBy(
+    data: FindOptionsWhere<User>,
+    relations?: string[],
+    throwException = true,
+  ) {
+    const user = await this.userRepo.findOne({
+      where: { ...data, isDeleted: false },
+      relations,
+    });
+    if (!user && throwException)
+      throw new HttpException(HttpStatus.NOT_FOUND, 'USER', 'm');
+    return user;
+  }
+
+  async findManyBy(
+    data: FindOptionsWhere<User>,
+    relations?: string[],
+    throwException = true,
+  ) {
+    const users = await this.userRepo.find({
+      where: { ...data, isDeleted: false },
+      relations,
+    });
+    if (!users && throwException)
+      throw new HttpException(HttpStatus.NOT_FOUND, 'USER', 'm');
+    return users;
+  }
+
   async findByEmail(email: string) {
     return await this.userRepo.findOne({
       where: { email },
@@ -89,7 +119,8 @@ export class UsersService {
       user: await this.userRepo.findOne({
         where: { id: createdUser.id },
       }),
-      password: data.password,
+      // password: data.password,
+      password: bcrypt.hashSync(data.password, 10)
     });
 
     return createdUser;

@@ -1,6 +1,12 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  HttpStatus,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { RoleNames } from 'src/modules/users/role.entity';
+import { RoleNames } from '../../modules/users/role.entity';
+import { HttpExceptionMessage } from '../../utils/HttpExceptionFilter';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -21,5 +27,15 @@ export class RolesGuard implements CanActivate {
     const hasRole = () =>
       user.roles.some((role: RoleNames) => roles.includes(role));
     return user && user.roles && hasRole();
+  }
+
+  handleRequest(err, user, info) {
+    if (err || !user) {
+      throw new HttpExceptionMessage(
+        HttpStatus.UNAUTHORIZED,
+        'Invalid token 2',
+      );
+    }
+    return user;
   }
 }

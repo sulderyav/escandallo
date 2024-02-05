@@ -1,5 +1,4 @@
 import { Entity, Column, ManyToOne, PrimaryColumn } from 'typeorm';
-import { User } from '../../modules/users/user.entity';
 
 @Entity({
   name: 'reset_password_tokens',
