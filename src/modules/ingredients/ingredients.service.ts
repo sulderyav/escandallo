@@ -26,11 +26,15 @@ export class IngredientsService {
   ) {}
 
   async findAll(params: FilterIngredientsDto) {
+    const { ignorePagination } = params;
+
     const query = this.ingredientRepo.createQueryBuilder('i');
 
-    query.orderBy('i.id', params.order).offset(params.skip).limit(params.take);
+    query.where({ isDeleted: false });
 
-    query.andWhere({ isDeleted: false });
+    if (ignorePagination) return await query.getMany();
+
+    query.orderBy('i.id', params.order).offset(params.skip).limit(params.take);
 
     const itemCount = await query.getCount();
     const data = await query.getMany();

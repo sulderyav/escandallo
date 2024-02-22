@@ -4,5 +4,6 @@
   "coverImage": "Imágen de portada",
   "steps": "Pasos",
   "portions": "Porciones",
-  "createdById": "ID del creador"
+  "createdById": "ID del creador",
+  "ignorePagination": "Ignorar paginación"
 }

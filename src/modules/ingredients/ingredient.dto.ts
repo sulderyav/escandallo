@@ -13,6 +13,7 @@ import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { i18nValidationMessage as t } from 'nestjs-i18n';
 import { PaginationOptionsDto } from '../../utils/pagination.dto';
 import { MeassurementType } from './ingredient.entity';
+import { ToBoolean } from 'src/utils/ToBoolean';
 
 export class CreateIngredientDto {
   @IsString({
@@ -107,4 +108,15 @@ export class CreateIngredientDto {
 
 export class UpdateIngredientDto extends PartialType(CreateIngredientDto) {}
 
-export class FilterIngredientsDto extends PaginationOptionsDto {}
+export class FilterIngredientsDto extends PaginationOptionsDto {
+  @IsOptional()
+  @ToBoolean()
+  @IsBoolean({
+    message: t('lang.IS_BOOLEAN', {
+      field: 'ignorePagination',
+      entity: 'ingredient',
+    }),
+  })
+  @ApiProperty()
+  readonly ignorePagination?: boolean;
+}
