@@ -6,8 +6,11 @@ import {
   Entity,
   BeforeInsert,
   BeforeUpdate,
+  OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+
+import { RecipeIngredient } from '../recipes/recipe-ingredients/entities/recipe-ingredient.entity';
 
 export enum MeassurementType {
   GRAM = 'gram',
@@ -86,6 +89,12 @@ export class Ingredient {
     default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @OneToMany(
+    () => RecipeIngredient,
+    (recipeIngredient) => recipeIngredient.ingredient,
+  )
+  recipeIngredients: RecipeIngredient[];
 
   @BeforeUpdate()
   async setDeletedAt() {

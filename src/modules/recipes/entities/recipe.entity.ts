@@ -6,8 +6,11 @@ import {
   Entity,
   BeforeInsert,
   BeforeUpdate,
+  OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+
+import { RecipeIngredient } from '../recipe-ingredients/entities/recipe-ingredient.entity';
 
 @Entity('recipes')
 export class Recipe {
@@ -58,4 +61,10 @@ export class Recipe {
     default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @OneToMany(
+    () => RecipeIngredient,
+    (recipeIngredient) => recipeIngredient.recipe,
+  )
+  recipeIngredients: RecipeIngredient[];
 }
