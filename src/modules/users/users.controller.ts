@@ -32,7 +32,12 @@ export class UsersController {
   async getMyInfo(@Req() req: Request) {
     const user = req.user as PayloadToken;
     if (!user) throw new HttpException(HttpStatus.FORBIDDEN);
-    return await this.usersService.myInfo(user.userId);
+    return await this.usersService.findOneBy(
+      {
+        id: user.userId,
+      },
+      ['roles'],
+    );
   }
 
   @Roles(RoleNames.ADMIN)
