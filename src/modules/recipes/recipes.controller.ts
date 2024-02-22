@@ -1,34 +1,60 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { RecipesService } from './recipes.service';
-import { CreateRecipeDto } from './dto/create-recipe.dto';
-import { UpdateRecipeDto } from './dto/update-recipe.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Body,
+  Param,
+  Delete,
+  ParseIntPipe,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
+import { JwtAuthGuard, RolesGuard } from '../../auth/guards';
+import { Public, Roles } from '../../auth/decorators';
+import { RoleNames } from '../users/role.entity';
+import { HttpException } from '../../utils/HttpExceptionFilter';
+import { RecipesService } from './recipes.service';
+import { CreateRecipeDto, UpdateRecipeDto, FilterRecipesDto } from './dto';
+
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiTags('recipes')
 @Controller('recipes')
 export class RecipesController {
-  constructor(private readonly recipesService: RecipesService) {}
+  constructor(private recipeRepo: RecipesService) {}
 
-  @Post()
-  create(@Body() createRecipeDto: CreateRecipeDto) {
-    return this.recipesService.create(createRecipeDto);
-  }
-
+  @Roles(RoleNames.ADMIN)
   @Get()
-  findAll() {
-    return this.recipesService.findAll();
+  async findAll(@Query() params: FilterRecipesDto) {
+    return await this.recipeRepo.findAll(params);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.recipesService.findOne(+id);
+  @Roles(RoleNames.ADMIN)
+  @Get('/:id')
+  async getOne(@Param('id') id: number) {
+    return await this.recipeRepo.findOneBy({ id });
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRecipeDto: UpdateRecipeDto) {
-    return this.recipesService.update(+id, updateRecipeDto);
+  @Roles(RoleNames.ADMIN)
+  @Post()
+  async create(@Body() payload: CreateRecipeDto) {
+    return await this.recipeRepo.create(payload);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.recipesService.remove(+id);
+  @Roles(RoleNames.ADMIN)
+  @Put('/:id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() payload: UpdateRecipeDto,
+  ) {
+    return await this.recipeRepo.update(id, payload);
+  }
+
+  @Roles(RoleNames.ADMIN)
+  @Delete('/:id')
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return await this.recipeRepo.remove(id);
   }
 }

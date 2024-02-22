@@ -1,26 +1,105 @@
-import { Injectable } from '@nestjs/common';
-import { CreateRecipeDto } from './dto/create-recipe.dto';
-import { UpdateRecipeDto } from './dto/update-recipe.dto';
+import {
+  Injectable,
+  NotFoundException,
+  Inject,
+  HttpStatus,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
+
+import { HttpException } from '../../utils/HttpExceptionFilter';
+import { PaginationDto, PaginationMetaDto } from '../../utils/pagination.dto';
+import { Recipe } from './entities/recipe.entity';
+import { CreateRecipeDto, UpdateRecipeDto, FilterRecipesDto } from './dto';
 
 @Injectable()
 export class RecipesService {
-  create(createRecipeDto: CreateRecipeDto) {
-    return 'This action adds a new recipe';
+  constructor(
+    @InjectRepository(Recipe)
+    private recipeRepo: Repository<Recipe>,
+  ) {}
+
+  async findAll(params: FilterRecipesDto) {
+    const query = this.recipeRepo.createQueryBuilder('recipe');
+
+    query
+      .orderBy('recipe.id', params.order)
+      .offset(params.skip)
+      .limit(params.take);
+
+    query.andWhere({ isDeleted: false });
+
+    const itemCount = await query.getCount();
+    const data = await query.getMany();
+
+    const paginationMetaDto = new PaginationMetaDto({
+      itemCount,
+      paginationOptionsDto: params,
+    });
+
+    return new PaginationDto(data, paginationMetaDto);
   }
 
-  findAll() {
-    return `This action returns all recipes`;
+  async findOneBy(
+    data: FindOptionsWhere<Recipe>,
+    relations?: string[],
+    throwException = true,
+  ) {
+    const recipe = await this.recipeRepo.findOne({
+      where: { ...data },
+      relations,
+    });
+    if (!recipe && throwException)
+      throw new HttpException(HttpStatus.NOT_FOUND, 'RECIPE', 'f');
+    return recipe;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} recipe`;
+  async findManyBy(
+    data: FindOptionsWhere<Recipe>,
+    relations?: string[],
+    throwException = true,
+  ) {
+    const recipe = await this.recipeRepo.find({
+      where: { ...data },
+      relations,
+    });
+    if (!recipe && throwException)
+      throw new HttpException(HttpStatus.NOT_FOUND, 'RECIPE', 'f');
+    return recipe;
   }
 
-  update(id: number, updateRecipeDto: UpdateRecipeDto) {
-    return `This action updates a #${id} recipe`;
+  async create(data: CreateRecipeDto) {
+    await this.checkIfRecipeExists(data);
+    const newRecipe = this.recipeRepo.create(data);
+    return await this.recipeRepo.save(newRecipe);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} recipe`;
+  async checkIfRecipeExists(
+    data: CreateRecipeDto | UpdateRecipeDto,
+    throwException = true,
+  ) {
+    const {} = data;
+    const recipe = await this.recipeRepo.findOne({
+      where: [],
+    });
+
+    if (recipe) {
+      if (!throwException) return true;
+    }
+
+    return false;
+  }
+
+  async update(id: number, changes: UpdateRecipeDto) {
+    const recipe = await this.findOneBy({ id });
+    this.recipeRepo.merge(recipe, changes);
+    return await this.recipeRepo.save(recipe);
+  }
+
+  async remove(id: number) {
+    // const recipe = await this.findOneBy({ id });
+    // recipe.isDeleted = true;
+    // return await this.recipeRepo.save(recipe);
+    return await this.recipeRepo.softDelete(id);
   }
 }
