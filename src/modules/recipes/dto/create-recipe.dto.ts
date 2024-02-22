@@ -50,6 +50,7 @@ export class CreateRecipeDto {
   @ApiProperty()
   readonly name: string;
 
+  @IsOptional()
   @IsUrl(
     {},
     {
@@ -60,7 +61,7 @@ export class CreateRecipeDto {
     },
   )
   @ApiProperty()
-  readonly coverImage: string;
+  readonly coverImage?: string;
 
   @IsString({
     message: t('lang.IS_STRING', {

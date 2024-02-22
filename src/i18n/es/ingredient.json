@@ -4,5 +4,6 @@
   "name": "Nombre",
   "description": "Descripción",
   "meassurementType": "Tipo de medida",
-  "cost": "Costo"
+  "cost": "Costo",
+  "createdById": "ID del creador"
 }

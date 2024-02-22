@@ -37,7 +37,7 @@ export class Recipe {
 
   @Column({
     type: 'varchar',
-    nullable: false,
+    nullable: true,
   })
   coverImage: string;
 

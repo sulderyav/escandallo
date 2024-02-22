@@ -15,12 +15,14 @@ import {
   UpdateIngredientDto,
   FilterIngredientsDto,
 } from './ingredient.dto';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class IngredientsService {
   constructor(
     @InjectRepository(Ingredient)
     private ingredientRepo: Repository<Ingredient>,
+    private userService: UsersService,
   ) {}
 
   async findAll(params: FilterIngredientsDto) {
@@ -72,6 +74,10 @@ export class IngredientsService {
   async create(data: CreateIngredientDto) {
     await this.checkIfIngredientExists(data);
     const newIngredient = this.ingredientRepo.create(data);
+
+    const user = await this.userService.findOneBy({ id: data.createdById });
+    newIngredient.createdBy = user;
+
     return await this.ingredientRepo.save(newIngredient);
   }
 

@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   UseGuards,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -22,8 +23,9 @@ import {
   UpdateIngredientDto,
   FilterIngredientsDto,
 } from './ingredient.dto';
+import { SetUserIdInterceptor } from 'src/utils/UserInterceptor';
 
-// @UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('ingredients')
 @Controller('ingredients')
 export class IngredientsController {
@@ -35,14 +37,14 @@ export class IngredientsController {
     return await this.ingredientsService.findAll(params);
   }
 
-  @Public()
-  // @Roles(RoleNames.ADMIN)
+  @Roles(RoleNames.ADMIN)
   @Get('/:id')
   async getOne(@Param('id') id: number) {
     return await this.ingredientsService.findOneBy({ id });
   }
 
   @Roles(RoleNames.ADMIN)
+  @UseInterceptors(new SetUserIdInterceptor('createdById'))
   @Post()
   async create(@Body() payload: CreateIngredientDto) {
     return await this.ingredientsService.create(payload);

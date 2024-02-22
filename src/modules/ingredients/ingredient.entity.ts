@@ -7,17 +7,20 @@ import {
   BeforeInsert,
   BeforeUpdate,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
 import { RecipeIngredient } from '../recipes/recipe-ingredients/entities/recipe-ingredient.entity';
+import { User } from '../users/user.entity';
 
 export enum MeassurementType {
-  GRAM = 'gram',
-  KILOGRAM = 'kilogram',
-  LITER = 'liter',
-  MILLILITER = 'milliliter',
-  PIECE = 'piece',
+  GRAM = 'GRAM',
+  KILOGRAM = 'KILOGRAM',
+  LITER = 'LITER',
+  MILLILITER = 'MILLILITER',
+  PIECE = 'PIECE',
 }
 
 @Entity('ingredients')
@@ -34,7 +37,7 @@ export class Ingredient {
 
   @Column({
     type: 'varchar',
-    nullable: false,
+    nullable: true,
   })
   image: string;
 
@@ -95,6 +98,12 @@ export class Ingredient {
     (recipeIngredient) => recipeIngredient.ingredient,
   )
   recipeIngredients: RecipeIngredient[];
+
+  @ManyToOne(() => User, (user) => user.ingredients, {
+    nullable: false,
+  })
+  @JoinColumn({ name: 'created_by_id' })
+  createdBy: User;
 
   @BeforeUpdate()
   async setDeletedAt() {

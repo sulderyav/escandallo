@@ -6,6 +6,8 @@ import {
   IsUrl,
   IsEnum,
   Min,
+  IsPositive,
+  IsInt,
 } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { i18nValidationMessage as t } from 'nestjs-i18n';
@@ -22,6 +24,7 @@ export class CreateIngredientDto {
   @ApiProperty()
   readonly slug: string;
 
+  @IsOptional()
   @IsString({
     message: t('lang.IS_STRING', {
       field: 'image',
@@ -38,7 +41,7 @@ export class CreateIngredientDto {
     },
   )
   @ApiProperty()
-  readonly image: string;
+  readonly image?: string;
 
   @IsString({
     message: t('lang.IS_STRING', {
@@ -85,6 +88,21 @@ export class CreateIngredientDto {
   })
   @ApiProperty()
   readonly cost: number;
+
+  @IsPositive({
+    message: t('lang.IS_POSITIVE', {
+      field: 'createdById',
+      entity: 'ingredient',
+    }),
+  })
+  @IsInt({
+    message: t('lang.IS_INT', {
+      field: 'createdById',
+      entity: 'ingredient',
+    }),
+  })
+  @ApiProperty()
+  readonly createdById: number;
 }
 
 export class UpdateIngredientDto extends PartialType(CreateIngredientDto) {}
