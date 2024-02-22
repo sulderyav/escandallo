@@ -67,6 +67,18 @@ export class User {
   lastName: string;
 
   @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  isActive: boolean;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  avatar: string;
+
+  @Column({
     type: 'boolean',
     default: false,
     nullable: false,
@@ -94,7 +106,11 @@ export class User {
   updatedAt: Date;
 
   @ManyToMany(() => Role, (role) => role.users)
-  @JoinTable({ name: 'user_roles' })
+  @JoinTable({
+    name: 'user_roles',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
+  })
   roles: Role[];
 
   @OneToOne(() => Credential, (credential) => credential.user)
@@ -124,5 +140,7 @@ export class User {
   multipleSettings() {
     if (this.firstName || this.lastName)
       this.fullName = `${this.firstName} ${this.lastName}`;
+    if (!this.avatar)
+      this.avatar = `https://ui-avatars.com/api/?name=${this.firstName}${this.lastName}&background=random`;
   }
 }

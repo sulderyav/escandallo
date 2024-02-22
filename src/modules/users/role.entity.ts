@@ -11,8 +11,12 @@ import { Exclude } from 'class-transformer';
 import { User } from './user.entity';
 
 export enum RoleNames {
-  SUPER_ADMIN = 'Super Admin',
-  ADMIN = 'Admin',
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  ADMIN = 'ADMIN',
+  TEACHER = 'TEACHER',
+  STUDENT = 'STUDENT',
+  RECIPE_ADMIN = 'RECIPE_ADMIN',
+  RECEPE_OBSERVER = 'RECEPE_OBSERVER',
 }
 
 @Entity('roles')
