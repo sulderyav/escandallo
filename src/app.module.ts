@@ -15,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
 import { IngredientsModule } from './modules/ingredients/ingredients.module';
 import { RecipesModule } from './modules/recipes/recipes.module';
 import { SubjectsModule } from './modules/subjects/subjects.module';
+import { CareersModule } from './modules/careers/careers.module';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { SubjectsModule } from './modules/subjects/subjects.module';
     IngredientsModule,
     RecipesModule,
     SubjectsModule,
+    CareersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
