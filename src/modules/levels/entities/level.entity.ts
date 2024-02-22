@@ -9,11 +9,14 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
 import { Career } from '../../careers/entities/career.entity';
 import { Subject } from '../../subjects/entities/subject.entity';
+import { User } from '../../users/user.entity';
 
 @Entity('levels')
 export class Level {
@@ -67,6 +70,10 @@ export class Level {
 
   @OneToMany(() => Subject, (subject) => subject.level)
   subjects: Subject[];
+
+  @ManyToMany(() => User, (user) => user.levels)
+  @JoinTable({ name: 'levels_users' })
+  users: User[];
 
   @BeforeUpdate()
   async setDeletedAt() {

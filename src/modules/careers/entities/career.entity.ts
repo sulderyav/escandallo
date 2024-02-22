@@ -7,10 +7,13 @@ import {
   BeforeInsert,
   BeforeUpdate,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
 import { Level } from '../../levels/entities/level.entity';
+import { User } from '../../users/user.entity';
 
 export enum CareerMode {
   PRESENCIAL = 'PRESENCIAL',
@@ -83,6 +86,10 @@ export class Career {
 
   @OneToMany(() => Level, (level) => level.career)
   levels: Level[];
+
+  @ManyToMany(() => User, (user) => user.careers)
+  @JoinTable({ name: 'careers_users' })
+  users: User[];
 
   @BeforeUpdate()
   async setDeletedAt() {

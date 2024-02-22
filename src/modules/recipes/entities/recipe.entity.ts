@@ -7,10 +7,12 @@ import {
   BeforeInsert,
   BeforeUpdate,
   OneToMany,
+  ManyToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
 import { RecipeIngredient } from '../recipe-ingredients/entities/recipe-ingredient.entity';
+import { Subject } from '../../subjects/entities/subject.entity';
 
 @Entity('recipes')
 export class Recipe {
@@ -67,4 +69,7 @@ export class Recipe {
     (recipeIngredient) => recipeIngredient.recipe,
   )
   recipeIngredients: RecipeIngredient[];
+
+  @ManyToMany(() => Subject, (subject) => subject.recipes)
+  subjects: Subject[];
 }

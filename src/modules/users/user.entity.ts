@@ -18,6 +18,9 @@ import { v4 as uuid } from 'uuid';
 
 import { Role } from './role.entity';
 import { Credential } from './credentials.entity';
+import { Career } from '../careers/entities/career.entity';
+import { Level } from '../levels/entities/level.entity';
+import { Subject } from '../subjects/entities/subject.entity';
 
 @Entity('users')
 export class User {
@@ -96,6 +99,15 @@ export class User {
 
   @OneToOne(() => Credential, (credential) => credential.user)
   credential: Credential;
+
+  @ManyToMany(() => Career, (career) => career.users)
+  careers: Career[];
+
+  @ManyToMany(() => Level, (level) => level.users)
+  levels: Level[];
+
+  @ManyToMany(() => Subject, (subject) => subject.users)
+  subjects: Subject[];
 
   @BeforeUpdate()
   async setDeletedAt() {
