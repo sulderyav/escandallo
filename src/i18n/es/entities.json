@@ -1,5 +1,6 @@
 {
   "USER": "Usuario",
   "INGREDIENT": "Ingrediente",
-  "RECIPE": "Receta"
+  "RECIPE": "Receta",
+  "RECIPE_INGREDIENT": "Ingrediente de receta"
 }
