@@ -6,20 +6,15 @@ import {
   Entity,
   BeforeInsert,
   BeforeUpdate,
-  OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
-import { Level } from '../../levels/entities/level.entity';
+import { Career } from '../../careers/entities/career.entity';
 
-export enum CareerMode {
-  PRESENCIAL = 'PRESENCIAL',
-  SEMIPRESENCIAL = 'SEMIPRESENCIAL',
-  VIRTUAL = 'VIRTUAL',
-}
-
-@Entity('careers')
-export class Career {
+@Entity('levels')
+export class Level {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -27,7 +22,6 @@ export class Career {
     type: 'varchar',
     length: 100,
     nullable: false,
-    unique: true,
   })
   slug: string;
 
@@ -35,24 +29,8 @@ export class Career {
     type: 'varchar',
     length: 100,
     nullable: false,
-    unique: true,
   })
   name: string;
-
-  @Column({
-    type: 'varchar',
-    length: 255,
-    nullable: true,
-  })
-  description: string;
-
-  @Column({
-    type: 'enum',
-    enum: CareerMode,
-    nullable: false,
-    default: CareerMode.PRESENCIAL,
-  })
-  mode: CareerMode;
 
   @Column({
     type: 'boolean',
@@ -81,8 +59,9 @@ export class Career {
   })
   updatedAt: Date;
 
-  @OneToMany(() => Level, (level) => level.career)
-  levels: Level[];
+  @ManyToOne(() => Career, (career) => career.levels)
+  @JoinColumn({ name: 'career_id' })
+  career: Career;
 
   @BeforeUpdate()
   async setDeletedAt() {

@@ -16,6 +16,7 @@ import { IngredientsModule } from './modules/ingredients/ingredients.module';
 import { RecipesModule } from './modules/recipes/recipes.module';
 import { SubjectsModule } from './modules/subjects/subjects.module';
 import { CareersModule } from './modules/careers/careers.module';
+import { LevelsModule } from './modules/levels/levels.module';
 
 @Module({
   imports: [
@@ -80,6 +81,7 @@ import { CareersModule } from './modules/careers/careers.module';
     RecipesModule,
     SubjectsModule,
     CareersModule,
+    LevelsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
