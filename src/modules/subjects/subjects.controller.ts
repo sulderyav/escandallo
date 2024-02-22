@@ -1,34 +1,60 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { SubjectsService } from './subjects.service';
-import { CreateSubjectDto } from './dto/create-subject.dto';
-import { UpdateSubjectDto } from './dto/update-subject.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Body,
+  Param,
+  Delete,
+  ParseIntPipe,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
+import { JwtAuthGuard, RolesGuard } from '../../auth/guards';
+import { Public, Roles } from '../../auth/decorators';
+import { RoleNames } from '../users/role.entity';
+import { HttpException } from '../../utils/HttpExceptionFilter';
+import { SubjectsService } from './subjects.service';
+import { CreateSubjectDto, UpdateSubjectDto, FilterSubjectsDto } from './dto';
+
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiTags('subjects')
 @Controller('subjects')
 export class SubjectsController {
-  constructor(private readonly subjectsService: SubjectsService) {}
+  constructor(private subjectsService: SubjectsService) {}
 
-  @Post()
-  create(@Body() createSubjectDto: CreateSubjectDto) {
-    return this.subjectsService.create(createSubjectDto);
-  }
-
+  @Roles(RoleNames.ADMIN)
   @Get()
-  findAll() {
-    return this.subjectsService.findAll();
+  async findAll(@Query() params: FilterSubjectsDto) {
+    return await this.subjectsService.findAll(params);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.subjectsService.findOne(+id);
+  @Roles(RoleNames.ADMIN)
+  @Get('/:id')
+  async getOne(@Param('id') id: number) {
+    return await this.subjectsService.findOneBy({ id });
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSubjectDto: UpdateSubjectDto) {
-    return this.subjectsService.update(+id, updateSubjectDto);
+  @Roles(RoleNames.ADMIN)
+  @Post()
+  async create(@Body() payload: CreateSubjectDto) {
+    return await this.subjectsService.create(payload);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.subjectsService.remove(+id);
+  @Roles(RoleNames.ADMIN)
+  @Put('/:id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() payload: UpdateSubjectDto,
+  ) {
+    return await this.subjectsService.update(id, payload);
+  }
+
+  @Roles(RoleNames.ADMIN)
+  @Delete('/:id')
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return await this.subjectsService.remove(id);
   }
 }

@@ -6,11 +6,15 @@ import {
   Entity,
   BeforeInsert,
   BeforeUpdate,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
+import { Level } from '../../levels/entities/level.entity';
+
 @Entity('subjects')
-export class Subjects {
+export class Subject {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -41,4 +45,8 @@ export class Subjects {
     default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @ManyToOne(() => Level, (level) => level.subjects)
+  @JoinColumn({ name: 'level_id' })
+  level: Level;
 }

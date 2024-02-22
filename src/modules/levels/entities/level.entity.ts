@@ -8,10 +8,12 @@ import {
   BeforeUpdate,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
 import { Career } from '../../careers/entities/career.entity';
+import { Subject } from '../../subjects/entities/subject.entity';
 
 @Entity('levels')
 export class Level {
@@ -62,6 +64,9 @@ export class Level {
   @ManyToOne(() => Career, (career) => career.levels)
   @JoinColumn({ name: 'career_id' })
   career: Career;
+
+  @OneToMany(() => Subject, (subject) => subject.level)
+  subjects: Subject[];
 
   @BeforeUpdate()
   async setDeletedAt() {
