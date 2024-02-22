@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   UseGuards,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -18,6 +19,7 @@ import { RoleNames } from '../users/role.entity';
 import { HttpException } from '../../utils/HttpExceptionFilter';
 import { RecipesService } from './recipes.service';
 import { CreateRecipeDto, UpdateRecipeDto, FilterRecipesDto } from './dto';
+import { SetUserIdInterceptor } from 'src/utils/UserInterceptor';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('recipes')
@@ -38,6 +40,7 @@ export class RecipesController {
   }
 
   @Roles(RoleNames.ADMIN)
+  @UseInterceptors(new SetUserIdInterceptor('createdById'))
   @Post()
   async create(@Body() payload: CreateRecipeDto) {
     return await this.recipeRepo.create(payload);

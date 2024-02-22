@@ -5,9 +5,14 @@ import { Recipe } from './entities/recipe.entity';
 import { RecipesService } from './recipes.service';
 import { RecipesController } from './recipes.controller';
 import { RecipeIngredientsModule } from './recipe-ingredients/recipe-ingredients.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Recipe]), RecipeIngredientsModule],
+  imports: [
+    TypeOrmModule.forFeature([Recipe]),
+    RecipeIngredientsModule,
+    UsersModule,
+  ],
   providers: [RecipesService],
   controllers: [RecipesController],
 })

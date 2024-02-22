@@ -1,1 +1,1 @@
-export * from './IpInterceptor';
+export * from './UserInterceptor';

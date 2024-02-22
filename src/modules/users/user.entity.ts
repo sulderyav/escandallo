@@ -21,6 +21,7 @@ import { Credential } from './credentials.entity';
 import { Career } from '../careers/entities/career.entity';
 import { Level } from '../levels/entities/level.entity';
 import { Subject } from '../subjects/entities/subject.entity';
+import { Recipe } from '../recipes/entities/recipe.entity';
 
 @Entity('users')
 export class User {
@@ -124,6 +125,9 @@ export class User {
 
   @ManyToMany(() => Subject, (subject) => subject.users)
   subjects: Subject[];
+
+  @OneToMany(() => Recipe, (recipe) => recipe.createdBy)
+  recipes: Recipe[];
 
   @BeforeUpdate()
   async setDeletedAt() {

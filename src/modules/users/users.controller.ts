@@ -53,7 +53,7 @@ export class UsersController {
     return await this.usersService.findOne(id);
   }
 
-  @Public()
+  @Roles()
   @Post()
   async create(@Body() payload: CreateUserDto) {
     return await this.usersService.create(payload);

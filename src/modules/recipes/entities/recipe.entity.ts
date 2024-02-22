@@ -8,11 +8,14 @@ import {
   BeforeUpdate,
   OneToMany,
   ManyToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
 import { RecipeIngredient } from '../recipe-ingredients/entities/recipe-ingredient.entity';
 import { Subject } from '../../subjects/entities/subject.entity';
+import { User } from '../../users/user.entity';
 
 @Entity('recipes')
 export class Recipe {
@@ -72,4 +75,10 @@ export class Recipe {
 
   @ManyToMany(() => Subject, (subject) => subject.recipes)
   subjects: Subject[];
+
+  @ManyToOne(() => User, (user) => user.recipes, {
+    nullable: false,
+  })
+  @JoinColumn({ name: 'created_by_id' })
+  createdBy: User;
 }

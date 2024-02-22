@@ -11,12 +11,14 @@ import { HttpException } from '../../utils/HttpExceptionFilter';
 import { PaginationDto, PaginationMetaDto } from '../../utils/pagination.dto';
 import { Recipe } from './entities/recipe.entity';
 import { CreateRecipeDto, UpdateRecipeDto, FilterRecipesDto } from './dto';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class RecipesService {
   constructor(
     @InjectRepository(Recipe)
     private recipeRepo: Repository<Recipe>,
+    private userService: UsersService,
   ) {}
 
   async findAll(params: FilterRecipesDto) {
@@ -71,6 +73,10 @@ export class RecipesService {
   async create(data: CreateRecipeDto) {
     await this.checkIfRecipeExists(data);
     const newRecipe = this.recipeRepo.create(data);
+
+    const user = await this.userService.findOneBy({ id: data.createdById });
+    newRecipe.createdBy = user;
+
     return await this.recipeRepo.save(newRecipe);
   }
 

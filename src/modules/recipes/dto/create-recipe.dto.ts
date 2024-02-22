@@ -6,11 +6,19 @@ import {
   IsUrl,
   Min,
   IsInt,
+  IsPositive,
 } from 'class-validator';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { i18nValidationMessage as t } from 'nestjs-i18n';
+import { IsSlug } from 'src/utils/Validators';
 
 export class CreateRecipeDto {
+  @IsSlug({
+    message: t('lang.IS_SLUG', {
+      field: 'slug',
+      entity: 'recipe',
+    }),
+  })
   @IsString({
     message: t('lang.IS_STRING', {
       field: 'slug',
@@ -20,7 +28,8 @@ export class CreateRecipeDto {
   @MaxLength(50, {
     message: t('lang.MAX_LENGTH', {
       field: 'slug',
-      length: '50',
+      entity: 'recipe',
+      max: '50',
     }),
   })
   @ApiProperty()
@@ -65,7 +74,8 @@ export class CreateRecipeDto {
   @Min(1, {
     message: t('lang.MIN', {
       field: 'portions',
-      value: '1',
+      entity: 'recipe',
+      min: '1',
     }),
   })
   @IsInt({
@@ -76,4 +86,19 @@ export class CreateRecipeDto {
   })
   @ApiProperty()
   readonly portions: number;
+
+  @IsPositive({
+    message: t('lang.IS_POSITIVE', {
+      field: 'createdById',
+      entity: 'recipe',
+    }),
+  })
+  @IsInt({
+    message: t('lang.IS_INT', {
+      field: 'createdById',
+      entity: 'recipe',
+    }),
+  })
+  @ApiProperty()
+  readonly createdById: number;
 }

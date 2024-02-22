@@ -11,6 +11,7 @@
   "IS_ENUM": "Campo $t({entity}.{property}) debe ser uno de los siguientes valores: {enum}",
   "IS_ARRAY": "Campo $t({entity}.{property}) debe ser una lista",
   "IS_IP": "Campo $t({entity}.{property}) debe ser una dirección IP válida",
+  "IS_SLUG": "Campo $t({entity}.{property}) debe ser un slug válido",
   "MIN": "Campo $t({entity}.{property}) debe ser mayor o igual a {min}",
   "MAX": "Campo $t({entity}.{property}) debe ser menor o igual a {max}",
   "MAX_LENGTH": "Campo $t({entity}.{property}) debe tener máximo {max} caracteres",

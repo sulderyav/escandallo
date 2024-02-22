@@ -3,5 +3,6 @@
   "name": "Nombre",
   "coverImage": "Imágen de portada",
   "steps": "Pasos",
-  "portions": "Porciones"
+  "portions": "Porciones",
+  "createdById": "ID del creador"
 }
