@@ -82,6 +82,9 @@ export class IngredientsService {
     const user = await this.userService.findOneBy({ id: data.createdById });
     newIngredient.createdBy = user;
 
+    if (!newIngredient.image)
+      newIngredient.image = `https://ui-avatars.com/api/?name=${newIngredient.slug}&background=random&width=200&height=200`;
+
     return await this.ingredientRepo.save(newIngredient);
   }
 
