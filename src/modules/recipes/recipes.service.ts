@@ -22,14 +22,21 @@ export class RecipesService {
   ) {}
 
   async findAll(params: FilterRecipesDto) {
+    const { ignorePagination } = params;
     const query = this.recipeRepo.createQueryBuilder('recipe');
 
-    query
-      .orderBy('recipe.id', params.order)
-      .offset(params.skip)
-      .limit(params.take);
+    // Joins
+    query.leftJoinAndSelect('recipe.recipeIngredients', 'recipeIngredients');
+    query.leftJoinAndSelect('recipeIngredients.ingredient', 'ingredient');
 
-    query.andWhere({ isDeleted: false });
+    // Filters
+    query.where({ isDeleted: false });
+
+    query.orderBy('recipe.id', params.order);
+
+    if (ignorePagination) return await query.getMany();
+
+    query.offset(params.skip).limit(params.take);
 
     const itemCount = await query.getCount();
     const data = await query.getMany();
@@ -77,6 +84,9 @@ export class RecipesService {
     const user = await this.userService.findOneBy({ id: data.createdById });
     newRecipe.createdBy = user;
 
+    if (!data.coverImage)
+      newRecipe.coverImage = `https://ui-avatars.com/api/?name=${newRecipe.slug}&background=random&width=200&height=200`;
+
     return await this.recipeRepo.save(newRecipe);
   }
 
@@ -84,13 +94,24 @@ export class RecipesService {
     data: CreateRecipeDto | UpdateRecipeDto,
     throwException = true,
   ) {
-    const {} = data;
+    const { slug, name } = data;
     const recipe = await this.recipeRepo.findOne({
-      where: [],
+      where: [
+        {
+          slug,
+          isDeleted: false,
+        },
+        {
+          name,
+          isDeleted: false,
+        },
+      ],
     });
 
     if (recipe) {
       if (!throwException) return true;
+
+      throw new HttpException(HttpStatus.CONFLICT, 'slug', 'f', 'recipe');
     }
 
     return false;
@@ -103,9 +124,8 @@ export class RecipesService {
   }
 
   async remove(id: number) {
-    // const recipe = await this.findOneBy({ id });
-    // recipe.isDeleted = true;
-    // return await this.recipeRepo.save(recipe);
-    return await this.recipeRepo.softDelete(id);
+    const recipe = await this.findOneBy({ id });
+    recipe.isDeleted = true;
+    return await this.recipeRepo.save(recipe);
   }
 }

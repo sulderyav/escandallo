@@ -15,5 +15,6 @@ import { UsersModule } from '../users/users.module';
   ],
   providers: [RecipesService],
   controllers: [RecipesController],
+  exports: [RecipesService],
 })
 export class RecipesModule {}

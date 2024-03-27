@@ -18,12 +18,16 @@ import {
   UpdateRecipeIngredientDto,
   FilterRecipeIngredientsDto,
 } from './dto';
+import { RecipesService } from '../recipes.service';
+import { IngredientsService } from '../../ingredients/ingredients.service';
 
 @Injectable()
 export class RecipeIngredientsService {
   constructor(
     @InjectRepository(RecipeIngredient)
     private recipeIngredientRepo: Repository<RecipeIngredient>,
+    private recipesService: RecipesService,
+    private ingredientsService: IngredientsService,
   ) {}
 
   async findAll(params: FilterRecipeIngredientsDto) {
@@ -73,8 +77,19 @@ export class RecipeIngredientsService {
   }
 
   async create(data: CreateRecipeIngredientDto) {
-    await this.checkIfRecipeIngredientExists(data);
+    // await this.checkIfRecipeIngredientExists(data);
     const newRecipeIngredients = this.recipeIngredientRepo.create(data);
+
+    const recipe = await this.recipesService.findOneBy({
+      id: data.recipeId,
+    });
+    newRecipeIngredients.recipe = recipe;
+
+    const ingredient = await this.ingredientsService.findOneBy({
+      id: data.ingredientId,
+    });
+    newRecipeIngredients.ingredient = ingredient;
+
     return await this.recipeIngredientRepo.save(newRecipeIngredients);
   }
 

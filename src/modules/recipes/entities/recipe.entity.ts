@@ -53,6 +53,19 @@ export class Recipe {
   })
   portions: number;
 
+  @Column({
+    type: 'boolean',
+    default: false,
+    nullable: false,
+  })
+  isDeleted: boolean;
+
+  @Column({
+    type: 'timestamptz',
+    nullable: true,
+  })
+  deletedAt: Date;
+
   @Exclude()
   @CreateDateColumn({
     type: 'timestamptz',
@@ -81,4 +94,11 @@ export class Recipe {
   })
   @JoinColumn({ name: 'created_by_id' })
   createdBy: User;
+
+  @BeforeUpdate()
+  async setDeletedAt() {
+    if (this.isDeleted) {
+      this.deletedAt = new Date();
+    }
+  }
 }
