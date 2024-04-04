@@ -94,9 +94,8 @@ export class SubjectsService {
   }
 
   async remove(id: number) {
-    // const subjects = await this.findOneBy({ id });
-    // subjects.isDeleted = true;
-    // return await this.subjectRepo.save(subjects);
-    return await this.subjectRepo.softDelete(id);
+    const subjects = await this.findOneBy({ id });
+    subjects.isDeleted = true;
+    return await this.subjectRepo.save(subjects);
   }
 }

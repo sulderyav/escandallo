@@ -12,6 +12,7 @@ import {
   JoinTable,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { v4 as uuid } from 'uuid';
 
 import { Level } from '../../levels/entities/level.entity';
 import { User } from '../../users/user.entity';
@@ -37,13 +38,26 @@ export class Subject {
   name: string;
 
   @Exclude()
+  @Column({
+    type: 'boolean',
+    default: false,
+    nullable: false,
+  })
+  isDeleted: boolean;
+
+  @Exclude()
+  @Column({
+    type: 'timestamptz',
+    nullable: true,
+  })
+  deletedAt: Date;
+
   @CreateDateColumn({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
 
-  @Exclude()
   @UpdateDateColumn({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
@@ -65,4 +79,13 @@ export class Subject {
     name: 'subjects_recipes',
   })
   recipes: Recipe[];
+
+  @BeforeUpdate()
+  async setDeletedAt() {
+    if (this.isDeleted) {
+      this.deletedAt = new Date();
+      this.slug = `${this.slug}-DELETED-${uuid()}`;
+      this.name = `${this.name}-DELETED-${uuid()}`;
+    }
+  }
 }

@@ -46,12 +46,12 @@ export class CreateSubjectDto {
   @ApiProperty()
   readonly name: string;
 
-  @IsPositive({
-    message: t('lang.IS_POSITIVE', {
-      field: 'levelId',
-      entity: 'subject',
-    }),
-  })
-  @ApiProperty()
-  readonly levelId: number;
+  // @IsPositive({
+  //   message: t('lang.IS_POSITIVE', {
+  //     field: 'levelId',
+  //     entity: 'subject',
+  //   }),
+  // })
+  // @ApiProperty()
+  // readonly levelId: number;
 }
