@@ -3,6 +3,8 @@
   "The product must have at least one subcategory": "El producto debe tener al menos una subcategoría",
   "File must be a .png .jpg .jpeg file": "El archivo debe ser un archivo .png .jpg .jpeg",
   "File size must be less than 500kb": "El tamaño del archivo debe ser menor a 500kb",
+  "File size must be less than 5MB": "El tamaño del archivo debe ser menor a 5MB",
   "You are not allowed to register a sale item for this sale.": "No tienes permiso para registrar un item de venta para esta venta.",
-  "The store is currently closed. Please try again later.": "La tienda está actualmente cerrada. Por favor intente más tarde."
+  "The store is currently closed. Please try again later.": "La tienda está actualmente cerrada. Por favor intente más tarde.",
+  "File is required": "El archivo es requerido"
 }
