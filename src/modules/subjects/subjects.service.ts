@@ -20,11 +20,19 @@ export class SubjectsService {
   ) {}
 
   async findAll(params: FilterSubjectsDto) {
+    const { ignorePagination } = params;
     const query = this.subjectRepo.createQueryBuilder('s');
 
-    query.orderBy('s.id', params.order).offset(params.skip).limit(params.take);
+    // Joins
 
-    query.andWhere({ isDeleted: false });
+    // Filters
+    query.where({ isDeleted: false });
+
+    query.orderBy('s.id', params.order);
+
+    if (ignorePagination) return await query.getMany();
+
+    query.offset(params.skip).limit(params.take);
 
     const itemCount = await query.getCount();
     const data = await query.getMany();

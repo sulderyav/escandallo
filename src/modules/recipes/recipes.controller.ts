@@ -39,6 +39,7 @@ export class RecipesController {
     return await this.recipeRepo.findOneBy({ id }, [
       'recipeIngredients',
       'recipeIngredients.ingredient',
+      'subjects',
     ]);
   }
 
