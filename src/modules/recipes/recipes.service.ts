@@ -12,6 +12,7 @@ import { PaginationDto, PaginationMetaDto } from '../../utils/pagination.dto';
 import { Recipe } from './entities/recipe.entity';
 import { CreateRecipeDto, UpdateRecipeDto, FilterRecipesDto } from './dto';
 import { UsersService } from '../users/users.service';
+import { SubjectsService } from '../subjects/subjects.service';
 
 @Injectable()
 export class RecipesService {
@@ -19,6 +20,7 @@ export class RecipesService {
     @InjectRepository(Recipe)
     private recipeRepo: Repository<Recipe>,
     private userService: UsersService,
+    private subjectService: SubjectsService,
   ) {}
 
   async findAll(params: FilterRecipesDto) {
@@ -84,6 +86,13 @@ export class RecipesService {
     const user = await this.userService.findOneBy({ id: data.createdById });
     newRecipe.createdBy = user;
 
+    if (data.subjectIds && data.subjectIds.length > 0) {
+      const subjects = await this.subjectService.findManyByWithIds(
+        data.subjectIds,
+      );
+      newRecipe.subjects = subjects;
+    }
+
     if (!data.coverImage)
       newRecipe.coverImage = `https://ui-avatars.com/api/?name=${newRecipe.slug}&background=random&width=200&height=200`;
 
@@ -111,7 +120,10 @@ export class RecipesService {
     if (recipe) {
       if (!throwException) return true;
 
-      throw new HttpException(HttpStatus.CONFLICT, 'slug', 'f', 'recipe');
+      if (recipe.slug === slug)
+        throw new HttpException(HttpStatus.CONFLICT, 'slug', 'm', 'recipe');
+      if (recipe.name === name)
+        throw new HttpException(HttpStatus.CONFLICT, 'name', 'm', 'recipe');
     }
 
     return false;

@@ -102,4 +102,15 @@ export class CreateRecipeDto {
   })
   @ApiProperty()
   readonly createdById: number;
+
+  @IsOptional()
+  @IsPositive({
+    message: t('lang.IS_POSITIVE', {
+      field: 'subjectIds',
+      entity: 'recipe',
+    }),
+    each: true,
+  })
+  @ApiProperty()
+  readonly subjectIds?: number[];
 }

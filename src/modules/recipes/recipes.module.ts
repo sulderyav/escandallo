@@ -6,12 +6,14 @@ import { RecipesService } from './recipes.service';
 import { RecipesController } from './recipes.controller';
 import { RecipeIngredientsModule } from './recipe-ingredients/recipe-ingredients.module';
 import { UsersModule } from '../users/users.module';
+import { SubjectsModule } from '../subjects/subjects.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Recipe]),
     RecipeIngredientsModule,
     UsersModule,
+    SubjectsModule,
   ],
   providers: [RecipesService],
   controllers: [RecipesController],

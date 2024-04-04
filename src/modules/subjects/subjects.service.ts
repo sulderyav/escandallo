@@ -43,7 +43,7 @@ export class SubjectsService {
     throwException = true,
   ) {
     const subjects = await this.subjectRepo.findOne({
-      where: { ...data },
+      where: { ...data, isDeleted: false },
       relations,
     });
     if (!subjects && throwException)
@@ -57,11 +57,21 @@ export class SubjectsService {
     throwException = true,
   ) {
     const subjects = await this.subjectRepo.find({
-      where: { ...data },
+      where: { ...data, isDeleted: false },
       relations,
     });
     if (!subjects && throwException)
       throw new HttpException(HttpStatus.NOT_FOUND, 'SUBJECT', 'f');
+    return subjects;
+  }
+
+  async findManyByWithIds(ids: number[], relations?: string[]) {
+    const subjects = [];
+    for (const id of ids) {
+      // I made this in order to if the subject not found, it will not throw an error with the specific id
+      const subject = await this.findOneBy({ id }, relations);
+      if (subject) subjects.push(subject);
+    }
     return subjects;
   }
 
