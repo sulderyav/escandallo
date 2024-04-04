@@ -36,7 +36,10 @@ export class RecipesController {
   @Roles(RoleNames.ADMIN)
   @Get('/:id')
   async getOne(@Param('id') id: number) {
-    return await this.recipeRepo.findOneBy({ id });
+    return await this.recipeRepo.findOneBy({ id }, [
+      'recipeIngredients',
+      'recipeIngredients.ingredient',
+    ]);
   }
 
   @Roles(RoleNames.ADMIN)
