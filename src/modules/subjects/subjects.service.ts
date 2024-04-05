@@ -93,13 +93,27 @@ export class SubjectsService {
     data: CreateSubjectDto | UpdateSubjectDto,
     throwException = true,
   ) {
-    const {} = data;
+    const { name, slug } = data;
     const subjects = await this.subjectRepo.findOne({
-      where: [],
+      where: [
+        {
+          name,
+          isDeleted: false,
+        },
+        {
+          slug,
+          isDeleted: false,
+        },
+      ],
     });
 
     if (subjects) {
       if (!throwException) return true;
+
+      if (subjects.name === name)
+        throw new HttpException(HttpStatus.CONFLICT, 'name', 'm', 'subject');
+      if (subjects.slug === slug)
+        throw new HttpException(HttpStatus.CONFLICT, 'slug', 'm', 'subject');
     }
 
     return false;
