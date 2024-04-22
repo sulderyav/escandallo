@@ -83,10 +83,17 @@ export class Recipe {
   @OneToMany(
     () => RecipeIngredient,
     (recipeIngredient) => recipeIngredient.recipe,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
   )
   recipeIngredients: RecipeIngredient[];
 
-  @ManyToMany(() => Subject, (subject) => subject.recipes)
+  @ManyToMany(() => Subject, (subject) => subject.recipes, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   subjects: Subject[];
 
   @ManyToOne(() => User, (user) => user.recipes, {

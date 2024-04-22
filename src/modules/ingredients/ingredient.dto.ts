@@ -80,15 +80,25 @@ export class CreateIngredientDto {
   @ApiProperty()
   readonly meassurementType: MeassurementType;
 
+  // @Min(0, {
+  //   message: t('lang.MIN', {
+  //     field: 'cost',
+  //     value: 0,
+  //     entity: 'ingredient',
+  //   }),
+  // })
+  // @ApiProperty()
+  // readonly cost: number;
+
   @Min(0, {
     message: t('lang.MIN', {
-      field: 'cost',
+      field: 'unitPrice',
       value: 0,
       entity: 'ingredient',
     }),
   })
   @ApiProperty()
-  readonly cost: number;
+  readonly unitPrice: number;
 
   @IsPositive({
     message: t('lang.IS_POSITIVE', {

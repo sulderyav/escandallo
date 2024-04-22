@@ -54,7 +54,7 @@ export class RecipeIngredientsService {
     throwException = true,
   ) {
     const recipeIngredients = await this.recipeIngredientRepo.findOne({
-      where: { ...data, isDeleted: false },
+      where: { ...data },
       relations,
     });
     if (!recipeIngredients && throwException)
@@ -68,7 +68,7 @@ export class RecipeIngredientsService {
     throwException = true,
   ) {
     const recipeIngredients = await this.recipeIngredientRepo.find({
-      where: { ...data, isDeleted: false },
+      where: { ...data },
       relations,
     });
     if (!recipeIngredients && throwException)
@@ -89,6 +89,23 @@ export class RecipeIngredientsService {
       id: data.ingredientId,
     });
     newRecipeIngredients.ingredient = ingredient;
+
+    newRecipeIngredients.netWeight = data.grossWeight - data.waste;
+    newRecipeIngredients.wastePercentage = parseFloat(
+      ((data.waste / data.grossWeight) * 100).toFixed(2),
+    );
+    // newRecipeIngredients.output = data.grossWeight - data.waste;
+    newRecipeIngredients.outputPercentage = parseFloat(
+      ((newRecipeIngredients.netWeight / data.grossWeight) * 100).toFixed(2),
+    );
+    newRecipeIngredients.outputCost = parseFloat(
+      (ingredient.unitPrice * newRecipeIngredients.netWeight).toFixed(2),
+    );
+    newRecipeIngredients.wasteCost = parseFloat(
+      (ingredient.unitPrice * data.waste).toFixed(2),
+    );
+    newRecipeIngredients.totalCost =
+      newRecipeIngredients.outputCost + newRecipeIngredients.wasteCost;
 
     return await this.recipeIngredientRepo.save(newRecipeIngredients);
   }
@@ -116,8 +133,9 @@ export class RecipeIngredientsService {
   }
 
   async remove(id: number) {
-    const recipeIngredients = await this.findOneBy({ id });
-    recipeIngredients.isDeleted = true;
-    return await this.recipeIngredientRepo.save(recipeIngredients);
+    // const recipeIngredients = await this.findOneBy({ id });
+    // recipeIngredients.isDeleted = true;
+    // return await this.recipeIngredientRepo.save(recipeIngredients);
+    return await this.recipeIngredientRepo.delete({ id });
   }
 }

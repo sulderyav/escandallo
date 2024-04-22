@@ -4,7 +4,6 @@ import {
   UploadedFile,
   UseInterceptors,
   Req,
-  Body,
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
@@ -16,12 +15,9 @@ import { createReadStream } from 'fs';
 
 import { UploadsService } from './uploads.service';
 import { JwtAuthGuard, RolesGuard } from '../../auth/guards';
-import { Public, Roles } from '../../auth/decorators';
+import { Roles } from '../../auth/decorators';
 import { RoleNames } from '../users/role.entity';
-import {
-  HttpException,
-  HttpExceptionMessage,
-} from '../../utils/HttpExceptionFilter';
+import { HttpExceptionMessage } from '../../utils/HttpExceptionFilter';
 
 export const RECIPES_IMAGES_PATH = 'uploads/recipes/images';
 export const INGREDIENTS_IMAGES_PATH = 'uploads/ingredients/images';

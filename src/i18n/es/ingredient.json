@@ -6,5 +6,6 @@
   "meassurementType": "Tipo de medida",
   "cost": "Costo",
   "createdById": "ID del creador",
-  "ignorePagination": "Ignorar paginación"
+  "ignorePagination": "Ignorar paginación",
+  "unitPrice": "Precio unitario"
 }

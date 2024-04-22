@@ -26,13 +26,53 @@ import { i18nValidationMessage as t } from 'nestjs-i18n';
 export class CreateRecipeIngredientDto {
   @Min(0, {
     message: t('lang.MIN', {
-      field: 'quantity',
+      field: 'grossWeight',
       entity: 'recipeIngredient',
       min: 0,
     }),
   })
   @ApiProperty()
-  readonly quantity: number;
+  readonly grossWeight: number;
+
+  // @Min(0, {
+  //   message: t('lang.MIN', {
+  //     field: 'netWeight',
+  //     entity: 'recipeIngredient',
+  //     min: 0,
+  //   }),
+  // })
+  // @ApiProperty()
+  // readonly netWeight: number;
+
+  @Min(0, {
+    message: t('lang.MIN', {
+      field: 'waste',
+      entity: 'recipeIngredient',
+      min: 0,
+    }),
+  })
+  @ApiProperty()
+  readonly waste: number;
+
+  // @Min(0, {
+  //   message: t('lang.MIN', {
+  //     field: 'totalCost',
+  //     entity: 'recipeIngredient',
+  //     min: 0,
+  //   }),
+  // })
+  // @ApiProperty()
+  // readonly totalCost: number;
+
+  // @Min(0, {
+  //   message: t('lang.MIN', {
+  //     field: 'output',
+  //     entity: 'recipeIngredient',
+  //     min: 0,
+  //   }),
+  // })
+  // @ApiProperty()
+  // readonly output: number;
 
   @IsPositive({
     message: t('lang.IS_POSITIVE', {

@@ -1,5 +1,10 @@
 {
   "quantity": "Cantidad",
   "recipeId": "ID Receta",
-  "ingredientId": "ID Ingrediente"
+  "ingredientId": "ID Ingrediente",
+  "grossWeight": "Peso Bruto",
+  "netWeight": "Peso Neto",
+  "waste": "Merma",
+  "totalCost": "Costo Total",
+  "output": "Rendimiento"
 }

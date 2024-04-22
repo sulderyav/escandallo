@@ -20,24 +20,52 @@ export class RecipeIngredient {
   id: number;
 
   @Column({
-    type: 'integer',
-    nullable: false,
-    default: 0,
-  })
-  quantity: number;
-
-  @Column({
-    type: 'boolean',
-    default: false,
+    type: 'float',
     nullable: false,
   })
-  isDeleted: boolean;
+  grossWeight: number;
 
   @Column({
-    type: 'timestamptz',
-    nullable: true,
+    type: 'float',
+    nullable: false,
   })
-  deletedAt: Date;
+  netWeight: number;
+
+  @Column({
+    type: 'float',
+    nullable: false,
+  })
+  waste: number;
+
+  @Column({
+    type: 'float',
+    nullable: false,
+  })
+  outputPercentage: number;
+
+  @Column({
+    type: 'float',
+    nullable: false,
+  })
+  wastePercentage: number;
+
+  @Column({
+    type: 'float',
+    nullable: false,
+  })
+  outputCost: number;
+
+  @Column({
+    type: 'float',
+    nullable: false,
+  })
+  wasteCost: number;
+
+  @Column({
+    type: 'float',
+    nullable: false,
+  })
+  totalCost: number;
 
   @Exclude()
   @CreateDateColumn({
@@ -53,18 +81,13 @@ export class RecipeIngredient {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => Recipe, (recipe) => recipe.recipeIngredients)
+  @ManyToOne(() => Recipe, (recipe) => recipe.recipeIngredients, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'recipe_id' })
   recipe: Recipe;
 
   @ManyToOne(() => Ingredient, (ingredient) => ingredient.recipeIngredients)
   @JoinColumn({ name: 'ingredient_id' })
   ingredient: Ingredient;
-
-  @BeforeUpdate()
-  async setDeletedAt() {
-    if (this.isDeleted) {
-      this.deletedAt = new Date();
-    }
-  }
 }

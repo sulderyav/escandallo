@@ -74,7 +74,9 @@ export class Subject {
   })
   users: User[];
 
-  @ManyToMany(() => Recipe, (recipe) => recipe.subjects)
+  @ManyToMany(() => Recipe, (recipe) => recipe.subjects, {
+    onDelete: 'CASCADE',
+  })
   @JoinTable({
     name: 'subjects_recipes',
   })

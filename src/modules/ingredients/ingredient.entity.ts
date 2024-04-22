@@ -16,11 +16,12 @@ import { RecipeIngredient } from '../recipes/recipe-ingredients/entities/recipe-
 import { User } from '../users/user.entity';
 
 export enum MeassurementType {
-  GRAM = 'GRAM',
+  // GRAM = 'GRAM',
   KILOGRAM = 'KILOGRAM',
   LITER = 'LITER',
-  MILLILITER = 'MILLILITER',
-  PIECE = 'PIECE',
+  // MILLILITER = 'MILLILITER',
+  // PIECE = 'PIECE',
+  UNITS = 'UNITS',
 }
 
 @Entity('ingredients')
@@ -64,7 +65,7 @@ export class Ingredient {
     type: 'float',
     nullable: false,
   })
-  cost: number;
+  unitPrice: number;
 
   @Column({
     type: 'boolean',
