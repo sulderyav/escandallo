@@ -34,7 +34,7 @@ export class SubjectsController {
   @Roles(RoleNames.ADMIN)
   @Get('/:id')
   async getOne(@Param('id') id: number) {
-    return await this.subjectsService.findOneBy({ id });
+    return await this.subjectsService.findOneBy({ id }, ['levels']);
   }
 
   @Roles(RoleNames.ADMIN)

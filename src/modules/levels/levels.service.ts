@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
+import slugify from 'slugify';
 
 import { HttpException } from '../../utils/HttpExceptionFilter';
 import { PaginationDto, PaginationMetaDto } from '../../utils/pagination.dto';
@@ -20,11 +21,18 @@ export class LevelsService {
   ) {}
 
   async findAll(params: FilterLevelsDto) {
+    const { ignorePagination } = params;
     const query = this.levelRepo.createQueryBuilder('l');
 
-    query.orderBy('l.id', params.order).offset(params.skip).limit(params.take);
-
+    // Filters
     query.andWhere({ isDeleted: false });
+
+    // Several
+    query.orderBy('l.id', params.order);
+
+    if (ignorePagination) return await query.getMany();
+
+    query.offset(params.skip).limit(params.take);
 
     const itemCount = await query.getCount();
     const data = await query.getMany();
@@ -68,6 +76,10 @@ export class LevelsService {
   async create(data: CreateLevelDto) {
     await this.checkIfLevelExists(data);
     const newLevel = this.levelRepo.create(data);
+
+    if (!data.slug)
+      newLevel.slug = slugify(data.name, { lower: true, strict: true });
+
     return await this.levelRepo.save(newLevel);
   }
 
@@ -75,13 +87,19 @@ export class LevelsService {
     data: CreateLevelDto | UpdateLevelDto,
     throwException = true,
   ) {
-    const {} = data;
+    const { name } = data;
     const levels = await this.levelRepo.findOne({
-      where: [],
+      where: [
+        {
+          name,
+        },
+      ],
     });
 
     if (levels) {
       if (!throwException) return true;
+
+      throw new HttpException(HttpStatus.CONFLICT, 'name', 'm', 'level');
     }
 
     return false;

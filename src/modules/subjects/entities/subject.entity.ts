@@ -64,9 +64,15 @@ export class Subject {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => Level, (level) => level.subjects)
-  @JoinColumn({ name: 'level_id' })
-  level: Level;
+  // @ManyToOne(() => Level, (level) => level.subjects)
+  // @JoinColumn({ name: 'level_id' })
+  @ManyToMany(() => Level, (level) => level.subjects, {
+    onDelete: 'CASCADE',
+  })
+  @JoinTable({
+    name: 'subjects_levels',
+  })
+  levels: Level[];
 
   @ManyToMany(() => User, (user) => user.subjects)
   @JoinTable({

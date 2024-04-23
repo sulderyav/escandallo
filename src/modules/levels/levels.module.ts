@@ -9,5 +9,6 @@ import { LevelsController } from './levels.controller';
   imports: [TypeOrmModule.forFeature([Level])],
   controllers: [LevelsController],
   providers: [LevelsService],
+  exports: [LevelsService],
 })
 export class LevelsModule {}

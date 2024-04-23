@@ -37,6 +37,7 @@ export class Level {
   })
   name: string;
 
+  @Exclude()
   @Column({
     type: 'boolean',
     default: false,
@@ -44,20 +45,19 @@ export class Level {
   })
   isDeleted: boolean;
 
+  @Exclude()
   @Column({
     type: 'timestamptz',
     nullable: true,
   })
   deletedAt: Date;
 
-  @Exclude()
   @CreateDateColumn({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
 
-  @Exclude()
   @UpdateDateColumn({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
@@ -68,7 +68,7 @@ export class Level {
   @JoinColumn({ name: 'career_id' })
   career: Career;
 
-  @OneToMany(() => Subject, (subject) => subject.level)
+  @ManyToMany(() => Subject, (subject) => subject.levels)
   subjects: Subject[];
 
   @ManyToMany(() => User, (user) => user.levels)
@@ -79,6 +79,8 @@ export class Level {
   async setDeletedAt() {
     if (this.isDeleted) {
       this.deletedAt = new Date();
+      this.slug = `${this.slug}-DELETED-${new Date().getTime()}`;
+      this.name = `${this.name}-DELETED-${new Date().getTime()}`;
     }
   }
 }

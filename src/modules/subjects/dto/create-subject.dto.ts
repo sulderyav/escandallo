@@ -54,4 +54,15 @@ export class CreateSubjectDto {
   // })
   // @ApiProperty()
   // readonly levelId: number;
+
+  @IsOptional()
+  @IsPositive({
+    message: t('lang.IS_POSITIVE', {
+      field: 'levelIds',
+      entity: 'subject',
+    }),
+    each: true,
+  })
+  @ApiProperty()
+  readonly levelIds?: number[];
 }

@@ -47,12 +47,12 @@ export class CreateLevelDto {
   @ApiProperty()
   readonly name: string;
 
-  @IsPositive({
-    message: t('lang.IS_POSITIVE', {
-      field: 'careerId',
-      entity: 'level',
-    }),
-  })
-  @ApiProperty()
-  readonly careerId: number;
+  // @IsPositive({
+  //   message: t('lang.IS_POSITIVE', {
+  //     field: 'careerId',
+  //     entity: 'level',
+  //   }),
+  // })
+  // @ApiProperty()
+  // readonly careerId: number;
 }

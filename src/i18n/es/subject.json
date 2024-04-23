@@ -1,5 +1,6 @@
 {
   "name": "Nombre",
   "slug": "Slug",
-  "levelId": "ID Nivel"
+  "levelId": "ID Nivel",
+  "levelIds": "IDs Niveles"
 }

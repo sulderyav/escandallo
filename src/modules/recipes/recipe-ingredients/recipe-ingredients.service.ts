@@ -104,8 +104,10 @@ export class RecipeIngredientsService {
     newRecipeIngredients.wasteCost = parseFloat(
       (ingredient.unitPrice * data.waste).toFixed(2),
     );
-    newRecipeIngredients.totalCost =
-      newRecipeIngredients.outputCost + newRecipeIngredients.wasteCost;
+    const payedCost = parseFloat(
+      (data.grossWeight * ingredient.unitPrice).toFixed(2),
+    );
+    newRecipeIngredients.totalCost = newRecipeIngredients.wasteCost + payedCost;
 
     return await this.recipeIngredientRepo.save(newRecipeIngredients);
   }

@@ -11,12 +11,15 @@ import { HttpException } from '../../utils/HttpExceptionFilter';
 import { PaginationDto, PaginationMetaDto } from '../../utils/pagination.dto';
 import { Subject } from './entities/subject.entity';
 import { CreateSubjectDto, UpdateSubjectDto, FilterSubjectsDto } from './dto';
+import { LevelsService } from '../levels/levels.service';
+import { Level } from '../levels/entities/level.entity';
 
 @Injectable()
 export class SubjectsService {
   constructor(
     @InjectRepository(Subject)
     private subjectRepo: Repository<Subject>,
+    private levelsService: LevelsService,
   ) {}
 
   async findAll(params: FilterSubjectsDto) {
@@ -86,6 +89,16 @@ export class SubjectsService {
   async create(data: CreateSubjectDto) {
     await this.checkIfSubjectExists(data);
     const newSubject = this.subjectRepo.create(data);
+
+    if (data.levelIds) {
+      const levels: Level[] = [];
+      for (const levelId of data.levelIds) {
+        const level = await this.levelsService.findOneBy({ id: levelId });
+        levels.push(level);
+      }
+      newSubject.levels = levels;
+    }
+
     return await this.subjectRepo.save(newSubject);
   }
 
@@ -122,6 +135,16 @@ export class SubjectsService {
   async update(id: number, changes: UpdateSubjectDto) {
     const subjects = await this.findOneBy({ id });
     this.subjectRepo.merge(subjects, changes);
+
+    if (changes.levelIds) {
+      const levels: Level[] = [];
+      for (const levelId of changes.levelIds) {
+        const level = await this.levelsService.findOneBy({ id: levelId });
+        levels.push(level);
+      }
+      subjects.levels = levels;
+    }
+
     return await this.subjectRepo.save(subjects);
   }
 
