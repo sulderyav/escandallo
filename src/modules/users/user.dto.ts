@@ -103,6 +103,7 @@ export class CreateUserDto {
     }),
     each: true,
   })
+  @ApiProperty()
   readonly roleIds: number[];
 
   // readonly registerDate: Date;

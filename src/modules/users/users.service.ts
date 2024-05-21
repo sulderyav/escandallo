@@ -156,6 +156,20 @@ export class UsersService {
 
     const user = await this.findOne(id);
     this.userRepo.merge(user, changes);
+
+    if (changes.password) {
+      // Remove old password
+      await this.credentialRepo.delete({
+        user: {
+          id: user.id,
+        },
+      });
+      await this.credentialRepo.save({
+        user,
+        password: bcrypt.hashSync(changes.password, 10),
+      });
+    }
+
     return await this.userRepo.save(user);
   }
 
