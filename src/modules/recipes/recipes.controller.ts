@@ -10,8 +10,10 @@ import {
   UseGuards,
   Query,
   UseInterceptors,
+  Req,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 
 import { JwtAuthGuard, RolesGuard } from '../../auth/guards';
 import { Public, Roles } from '../../auth/decorators';
@@ -20,6 +22,7 @@ import { HttpException } from '../../utils/HttpExceptionFilter';
 import { RecipesService } from './recipes.service';
 import { CreateRecipeDto, UpdateRecipeDto, FilterRecipesDto } from './dto';
 import { SetUserIdInterceptor } from 'src/utils/UserInterceptor';
+import { PayloadToken } from 'src/auth/models/token.model';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('recipes')
@@ -29,8 +32,14 @@ export class RecipesController {
 
   @Roles(RoleNames.ADMIN, RoleNames.TEACHER, RoleNames.STUDENT)
   @Get()
-  async findAll(@Query() params: FilterRecipesDto) {
-    return await this.recipeRepo.findAll(params);
+  async findAll(@Query() params: FilterRecipesDto, @Req() req: Request) {
+    const user = req.user as PayloadToken;
+    const appendParams = {};
+    if (user.roles.some((role) => role === RoleNames.STUDENT)) {
+      appendParams['filterByCurrentLevels'] = true;
+      appendParams['userId'] = user.userId;
+    }
+    return await this.recipeRepo.findAll(Object.assign(params, appendParams));
   }
 
   @Roles(RoleNames.ADMIN, RoleNames.TEACHER, RoleNames.STUDENT)

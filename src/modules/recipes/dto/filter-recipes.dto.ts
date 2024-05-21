@@ -16,4 +16,12 @@ export class FilterRecipesDto extends PaginationOptionsDto {
   })
   @ApiProperty()
   readonly ignorePagination?: boolean;
+
+  @IsOptional()
+  @ApiProperty()
+  readonly userId?: number;
+
+  @IsOptional()
+  @ApiProperty()
+  readonly filterByCurrentLevels?: boolean;
 }

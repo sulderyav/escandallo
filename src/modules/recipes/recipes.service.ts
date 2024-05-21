@@ -24,15 +24,23 @@ export class RecipesService {
   ) {}
 
   async findAll(params: FilterRecipesDto) {
-    const { ignorePagination } = params;
+    const { ignorePagination, filterByCurrentLevels, userId } = params;
     const query = this.recipeRepo.createQueryBuilder('recipe');
 
     // Joins
     query.leftJoinAndSelect('recipe.recipeIngredients', 'recipeIngredients');
     query.leftJoinAndSelect('recipeIngredients.ingredient', 'ingredient');
+    query.leftJoin('recipe.subjects', 'subject');
+    query.leftJoin('subject.levels', 'level');
 
     // Filters
     query.where({ isDeleted: false });
+
+    if (filterByCurrentLevels && userId) {
+      const user = await this.userService.findOneBy({ id: userId }, ['levels']);
+      const levelIds = user.levels.map((level) => level.id);
+      query.andWhere('level.id IN (:...levelIds)', { levelIds });
+    }
 
     query.orderBy('recipe.id', params.order);
 
