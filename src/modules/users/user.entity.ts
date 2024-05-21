@@ -69,8 +69,9 @@ export class User {
   lastName: string;
 
   @Column({
-    type: 'varchar',
+    type: 'boolean',
     nullable: true,
+    default: true,
   })
   isActive: boolean;
 
@@ -80,6 +81,7 @@ export class User {
   })
   avatar: string;
 
+  @Exclude()
   @Column({
     type: 'boolean',
     default: false,
@@ -87,20 +89,19 @@ export class User {
   })
   isDeleted: boolean;
 
+  @Exclude()
   @Column({
     type: 'timestamp',
     nullable: true,
   })
   deletedAt: Date;
 
-  @Exclude()
   @CreateDateColumn({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
 
-  @Exclude()
   @UpdateDateColumn({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
@@ -137,8 +138,10 @@ export class User {
   async setDeletedAt() {
     if (this.isDeleted) {
       const uuidCode = uuid().split('-')[0];
-      this.email = `${this.email}-${uuidCode}`;
-      this.mobile = `${this.mobile}-${uuidCode}`;
+      this.email = `${this.email}-DELETED-${uuidCode}`;
+      this.mobile = `${this.mobile}-DELETED-${uuidCode}`;
+      this.username = `${this.username}-DELETED-${uuidCode}`;
+      this.isActive = false;
       this.deletedAt = new Date();
     }
   }

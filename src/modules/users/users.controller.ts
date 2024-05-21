@@ -73,8 +73,9 @@ export class UsersController {
     return await this.usersService.update(id, payload);
   }
 
-  // @Delete('/:id')
-  // async remove(@Param('id', ParseIntPipe) id: number) {
-  //   return await this.usersService.remove(id);
-  // }
+  @Roles(RoleNames.ADMIN)
+  @Delete('/:id')
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return await this.usersService.remove(id);
+  }
 }

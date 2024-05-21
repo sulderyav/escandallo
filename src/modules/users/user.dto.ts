@@ -35,6 +35,19 @@ export class CreateUserDto {
   @ApiProperty()
   readonly lastName: string;
 
+  @IsOptional()
+  @IsUrl(
+    {},
+    {
+      message: t('lang.IS_URL', {
+        field: 'avatar',
+        entity: 'user',
+      }),
+    },
+  )
+  @ApiProperty()
+  readonly avatar?: string;
+
   @IsEmail(
     {},
     {
@@ -81,7 +94,7 @@ export class CreateUserDto {
       entity: 'user',
     }),
   })
-  readonly isActive: boolean;
+  readonly isActive?: boolean;
 
   @IsPositive({
     message: t('lang.IS_POSITIVE', {
@@ -90,7 +103,7 @@ export class CreateUserDto {
     }),
     each: true,
   })
-  readonly rolesIds: number[];
+  readonly roleIds: number[];
 
   // readonly registerDate: Date;
 }

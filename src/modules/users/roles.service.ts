@@ -11,15 +11,21 @@ export class RolesService {
     private userRepo: Repository<Role>,
   ) {}
 
+  async findAll() {
+    return await this.userRepo.find({
+      relations: [],
+    });
+  }
+
   async findOne(id: number) {
     const user = await this.userRepo.findOneBy({ id });
     if (!user) throw new NotFoundException(`Role not found.`);
     return user;
   }
 
-  async findByRolesIds(rolesIds: number[]) {
+  async findByRolesIds(roleIds: number[]) {
     return await this.userRepo.findBy({
-      id: In(rolesIds),
+      id: In(roleIds),
     });
   }
 }

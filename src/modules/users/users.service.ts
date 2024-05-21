@@ -24,7 +24,12 @@ export class UsersService {
   ) {}
 
   async findAll() {
-    return await this.userRepo.find();
+    return await this.userRepo.find({
+      where: {
+        isDeleted: false,
+      },
+      relations: ['roles'],
+    });
   }
 
   async listAll() {
@@ -52,7 +57,7 @@ export class UsersService {
 
   async findOne(id: number) {
     const user = await this.userRepo.findOne({
-      where: { id },
+      where: { id, isDeleted: false },
       relations: ['roles'],
     });
     if (!user) throw new HttpException(HttpStatus.NOT_FOUND, 'USER');
@@ -94,7 +99,7 @@ export class UsersService {
 
   async findByEmail(email: string) {
     return await this.userRepo.findOne({
-      where: { email },
+      where: { email, isDeleted: false },
       relations: ['roles', 'credential'],
     });
   }
@@ -104,7 +109,7 @@ export class UsersService {
 
     const newUser = this.userRepo.create(data);
 
-    const roles = await this.rolesService.findByRolesIds(data.rolesIds);
+    const roles = await this.rolesService.findByRolesIds(data.roleIds);
     newUser.roles = roles;
 
     if (newUser.roles.length === 0)
@@ -120,7 +125,7 @@ export class UsersService {
         where: { id: createdUser.id },
       }),
       // password: data.password,
-      password: bcrypt.hashSync(data.password, 10)
+      password: bcrypt.hashSync(data.password, 10),
     });
 
     return createdUser;
@@ -155,6 +160,8 @@ export class UsersService {
   }
 
   async remove(id: number) {
-    return await this.userRepo.delete(id);
+    const user = await this.findOne(id);
+    user.isDeleted = true;
+    return await this.userRepo.save(user);
   }
 }
