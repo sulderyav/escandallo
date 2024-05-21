@@ -21,17 +21,6 @@ export class SystemRolesSeeder1586224315330 implements MigrationInterface {
             'Encargado de administrar el sistema, pero no puede crear usuarios ni roles nuevos',
         },
         {
-          id: 3,
-          name: RoleNames.RECIPE_ADMIN,
-          description: 'Control total sobre las recetas',
-        },
-        {
-          id: 4,
-          name: RoleNames.RECEPE_OBSERVER,
-          description:
-            'Puede ver las recetas, pero no editarlas ni crear nuevas',
-        },
-        {
           id: 5,
           name: RoleNames.TEACHER,
           description: 'Profesor de materia',

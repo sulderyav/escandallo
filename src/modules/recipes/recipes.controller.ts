@@ -27,13 +27,13 @@ import { SetUserIdInterceptor } from 'src/utils/UserInterceptor';
 export class RecipesController {
   constructor(private recipeRepo: RecipesService) {}
 
-  @Roles(RoleNames.ADMIN)
+  @Roles(RoleNames.ADMIN, RoleNames.TEACHER, RoleNames.STUDENT)
   @Get()
   async findAll(@Query() params: FilterRecipesDto) {
     return await this.recipeRepo.findAll(params);
   }
 
-  @Roles(RoleNames.ADMIN)
+  @Roles(RoleNames.ADMIN, RoleNames.TEACHER, RoleNames.STUDENT)
   @Get('/:id')
   async getOne(@Param('id') id: number) {
     return await this.recipeRepo.findOneBy({ id }, [
@@ -43,14 +43,14 @@ export class RecipesController {
     ]);
   }
 
-  @Roles(RoleNames.ADMIN)
+  @Roles(RoleNames.ADMIN, RoleNames.TEACHER, RoleNames.STUDENT)
   @UseInterceptors(new SetUserIdInterceptor('createdById'))
   @Post()
   async create(@Body() payload: CreateRecipeDto) {
     return await this.recipeRepo.create(payload);
   }
 
-  @Roles(RoleNames.ADMIN)
+  @Roles(RoleNames.ADMIN, RoleNames.TEACHER)
   @Put('/:id')
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -59,7 +59,7 @@ export class RecipesController {
     return await this.recipeRepo.update(id, payload);
   }
 
-  @Roles(RoleNames.ADMIN)
+  @Roles(RoleNames.ADMIN, RoleNames.TEACHER)
   @Delete('/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     return await this.recipeRepo.remove(id);

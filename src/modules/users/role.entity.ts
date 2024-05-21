@@ -15,8 +15,6 @@ export enum RoleNames {
   ADMIN = 'ADMIN',
   TEACHER = 'TEACHER',
   STUDENT = 'STUDENT',
-  RECIPE_ADMIN = 'RECIPE_ADMIN',
-  RECEPE_OBSERVER = 'RECEPE_OBSERVER',
 }
 
 @Entity('roles')

@@ -68,14 +68,4 @@ export class Credential {
       this.deletedAt = new Date();
     }
   }
-
-  // @BeforeInsert()
-  // @BeforeUpdate()
-  // hashPasswordandGenerateCode() {
-  //   console.log(1);
-  //   console.log('this.password', this.password);
-  //   // this.password = bcrypt.hashSync(this.password, 10);
-  //   console.log('this.password', this.password);
-  //   console.log(2);
-  // }
 }

@@ -31,26 +31,26 @@ import { SetUserIdInterceptor } from 'src/utils/UserInterceptor';
 export class IngredientsController {
   constructor(private ingredientsService: IngredientsService) {}
 
-  @Roles(RoleNames.ADMIN)
+  @Roles(RoleNames.ADMIN, RoleNames.TEACHER, RoleNames.STUDENT)
   @Get()
   async findAll(@Query() params: FilterIngredientsDto) {
     return await this.ingredientsService.findAll(params);
   }
 
-  @Roles(RoleNames.ADMIN)
+  @Roles(RoleNames.ADMIN, RoleNames.TEACHER, RoleNames.STUDENT)
   @Get('/:id')
   async getOne(@Param('id') id: number) {
     return await this.ingredientsService.findOneBy({ id });
   }
 
-  @Roles(RoleNames.ADMIN)
+  @Roles(RoleNames.ADMIN, RoleNames.TEACHER, RoleNames.STUDENT)
   @UseInterceptors(new SetUserIdInterceptor('createdById'))
   @Post()
   async create(@Body() payload: CreateIngredientDto) {
     return await this.ingredientsService.create(payload);
   }
 
-  @Roles(RoleNames.ADMIN)
+  @Roles(RoleNames.ADMIN, RoleNames.TEACHER)
   @Put('/:id')
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -59,7 +59,7 @@ export class IngredientsController {
     return await this.ingredientsService.update(id, payload);
   }
 
-  @Roles(RoleNames.ADMIN)
+  @Roles(RoleNames.ADMIN, RoleNames.TEACHER)
   @Delete('/:id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     return await this.ingredientsService.remove(id);
