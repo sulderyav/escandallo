@@ -10,6 +10,8 @@ import { User } from './user.entity';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
 import { RolesService } from '../users/roles.service';
 import { Credential } from './credentials.entity';
+import { LevelsService } from '../levels/levels.service';
+import { Level } from '../levels/entities/level.entity';
 
 const bcrypt = require('bcrypt');
 
@@ -21,6 +23,7 @@ export class UsersService {
     @InjectRepository(Credential)
     private credentialRepo: Repository<Credential>,
     private rolesService: RolesService,
+    private levelsService: LevelsService,
   ) {}
 
   async findAll() {
@@ -58,14 +61,20 @@ export class UsersService {
   async findOne(id: number) {
     const user = await this.userRepo.findOne({
       where: { id, isDeleted: false },
-      relations: ['roles'],
+      relations: ['roles', 'levels'],
     });
     if (!user) throw new HttpException(HttpStatus.NOT_FOUND, 'USER');
     return user;
   }
 
   async myInfo(id: number) {
-    const user = await this.userRepo.findOneBy({ id });
+    const user = await this.userRepo.findOne({
+      where: {
+        id,
+        isDeleted: false,
+      },
+      relations: ['roles', 'levels'],
+    });
     return user;
   }
 
@@ -118,6 +127,15 @@ export class UsersService {
         'The user must have at least one role',
       );
 
+    if (data.levelIds) {
+      const levels: Level[] = [];
+      for (const levelId of data.levelIds) {
+        const level = await this.levelsService.findOneBy({ id: levelId });
+        levels.push(level);
+      }
+      newUser.levels = levels;
+    }
+
     const createdUser = await this.userRepo.save(newUser);
 
     await this.credentialRepo.save({
@@ -168,6 +186,15 @@ export class UsersService {
         user,
         password: bcrypt.hashSync(changes.password, 10),
       });
+    }
+
+    if (changes.levelIds) {
+      const levels: Level[] = [];
+      for (const levelId of changes.levelIds) {
+        const level = await this.levelsService.findOneBy({ id: levelId });
+        levels.push(level);
+      }
+      user.levels = levels;
     }
 
     return await this.userRepo.save(user);

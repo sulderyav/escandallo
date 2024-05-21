@@ -106,7 +106,16 @@ export class CreateUserDto {
   @ApiProperty()
   readonly roleIds: number[];
 
-  // readonly registerDate: Date;
+  @IsOptional()
+  @IsPositive({
+    message: t('lang.IS_POSITIVE', {
+      field: 'levelIds',
+      entity: 'user',
+    }),
+    each: true,
+  })
+  @ApiProperty()
+  readonly levelIds?: number[];
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}

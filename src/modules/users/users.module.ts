@@ -8,9 +8,10 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { RolesService } from './roles.service';
 import { RolesController } from './roles.controller';
+import { LevelsModule } from '../levels/levels.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Role, Credential])],
+  imports: [TypeOrmModule.forFeature([User, Role, Credential]), LevelsModule],
   providers: [UsersService, RolesService],
   controllers: [UsersController, RolesController],
   exports: [UsersService, RolesService],
