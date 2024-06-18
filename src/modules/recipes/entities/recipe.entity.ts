@@ -48,6 +48,12 @@ export class Recipe {
   steps: string;
 
   @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  video: string;
+
+  @Column({
     type: 'int',
     nullable: false,
   })

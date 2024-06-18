@@ -72,6 +72,19 @@ export class CreateRecipeDto {
   @ApiProperty()
   readonly steps: string;
 
+  @IsOptional()
+  @IsUrl(
+    {},
+    {
+      message: t('lang.IS_URL', {
+        field: 'video',
+        entity: 'recipe',
+      }),
+    },
+  )
+  @ApiProperty()
+  readonly video?: string;
+
   @Min(1, {
     message: t('lang.MIN', {
       field: 'portions',
